@@ -16,7 +16,7 @@ from django.http import HttpResponseBadRequest
 from django import forms
 from django.template import RequestContext
 import django_excel as excel
-from .forms import DesignerCreationMultiForm, PriceListForm
+from .forms import DesignerCreationMultiForm, PriceListForm, DesignerEditMultiForm
 from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.models import Permission
@@ -113,8 +113,20 @@ class DesignerCreate(PermissionRequiredMixin, CreateView):
 
 class DesignerUpdate(UpdateView):
     model = Designers
-    fields = ['name', 'phone_number', 'email', 'address', 'working_area', 'distance_work', 'experience',
-              'website', 'minimal_order', 'description', 'brigade']
+    form_class = DesignerEditMultiForm
+
+    # success_url = reverse_lazy('masters:main')
+
+    def get_success_url(self):
+        return reverse('designers:price', kwargs={'pk': self.object['designer'].id})
+
+    def get_form_kwargs(self):
+        kwargs = super(DesignerUpdate, self).get_form_kwargs()
+        kwargs.update(instance={
+            'designer': self.object,
+            'price_list': self.object.pricelist,
+        })
+        return kwargs
 
 
 class DesignerDelete(PermissionRequiredMixin, DeleteView):

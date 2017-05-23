@@ -2,6 +2,7 @@ import datetime
 
 import django_excel as excel
 from django import forms
+from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.http import HttpResponse, HttpResponseRedirect
 from django.http import HttpResponseBadRequest
@@ -219,7 +220,7 @@ class MasterUpdate(UpdateView):
     # success_url = reverse_lazy('masters:main')
 
     def get_success_url(self):
-        return reverse('masters:price', kwargs={'pk': self.object.id})
+        return reverse('masters:price', kwargs={'pk': self.object['master'].id})
 
     # fields = ['first_name', 'second_name', 'middle_name', 'phone_number', 'email', 'city', 'country', 'experience',
     #           'additional_info']
@@ -229,8 +230,8 @@ class MasterUpdate(UpdateView):
         kwargs = super(MasterUpdate, self).get_form_kwargs()
         kwargs.update(instance={
             'master': self.object,
-            # 'price_for_remodeling': PriceForRemodeling,
-            # 'price_for_walls_and_ceiling': self.object,
+            'price_for_remodeling': self.object.priceforremodeling,
+            'price_for_walls_and_ceiling': self.object.priceforwallsandceiling,
         })
         return kwargs
 

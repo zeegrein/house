@@ -106,6 +106,6 @@
         </table>
     {% endif %}
     <a class="btn btn-danger"  href="{% url 'designers:designer_delete' designers.id%}">Удалить</a>
-{#    <a class="btn btn-primary" href="{% url 'designers:designer_delete' designers.id%}">Редактировать</a>#}
+    <a class="btn btn-primary" href="{% url 'designers:designer_update' designers.id%}">Редактировать</a>
 
 {% endblock %}

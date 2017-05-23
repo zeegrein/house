@@ -1,5 +1,6 @@
 from collections import OrderedDict
 
+from django.contrib.auth import get_user_model
 from django.forms import ModelForm, DateField, SelectDateWidget, Textarea
 from django.forms.models import inlineformset_factory
 from betterforms.multiform import MultiModelForm
@@ -13,7 +14,10 @@ class MasterForm(ModelForm):
         widgets = {
             'additional_info': Textarea(attrs={'cols': 40, 'rows': 5}),
         }
-        fields = ('group', 'first_name', 'second_name', 'middle_name', 'country', 'city', 'phone_number', 'email', 'experience', 'additional_info')
+        fields = (
+            'group', 'first_name', 'second_name', 'middle_name', 'country', 'city', 'phone_number', 'email',
+            'experience',
+            'additional_info')
 
 
 PriceForRemodelingFormSet = inlineformset_factory(Master, PriceForRemodeling, extra=0, fields='__all__')

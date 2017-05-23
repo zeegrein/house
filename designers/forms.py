@@ -47,3 +47,10 @@ class DesignerCreationMultiForm(MultiModelForm):
         ('designers', DesignerForm),
         ('price_list', PriceListForm),
     ))
+
+
+class DesignerEditMultiForm(MultiModelForm):
+    form_classes = OrderedDict((
+        ('designer', DesignerForm),
+        ('price_list', PriceListForm),
+    ))
