@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Удаление мастера</h1>
+
+<p>Ты точно уверен(а) в том, что хочешь удалить этого мастера:  {{ master.second_name }} {{ master.first_name }}  {{ master.middle_name }}?</p>
+
+<form action="" method="POST">
+  {% csrf_token %}
+  <input type="submit" action="" value="Да! Удаляй." />
+</form>
+
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+<h2>Вы создаёте нового мастера</h2>
+<form action="" method="post">
+    {% csrf_token %}
+    <div>
+        <table>
+{#        {{ form.as_table }}#}
+            {% for field in form %}
+            <div class="master-creation">
+                <div class="master-creation-label">
+                    {{ field.label_tag }}
+
+                </div>
+                <div class="master-creation-field">
+                    {{ field }}
+                    {% if field.help_text %}
+                    <small style="color: grey">{{ field.help_text }}</small>
+                    {% endif %}
+                    {% if field.name == 'phone_number' %}
+                        <input type="text" class="input-medium bfh-phone" data-format="+1 (ddd) ddd-dddd" name="master-phone_number" maxlength="200" id="id_master-phone_number" required="">
+                        <span id='message'>works</span>
+                    {% endif %}
+                    {% for error in field.errors %}
+                    <p style="color: red">{{ error }}</p>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </table>
+        <input class="btn btn-primary" type="submit" value="Сохранить"/>
+    </div>
+</form>
+{% block upload %}
+{% endblock %}
+{#<script>#}
+{#    var m = getPhoneCodeByCountry("");#}
+{#    $("#id_master-phone_number").mask(m);#}
+{#    #}
+{#    #}
+{#    $("#id_master-phone_number").on("blur", function () {#}
+{#        var last = $(this).val().substr($(this).val().indexOf("-") + 1);#}
+{#    #}
+{#        if (last.length == 3) {#}
+{#            var move = $(this).val().substr($(this).val().indexOf("-") - 1, 1);#}
+{#            var lastfour = move + last;#}
+{#    #}
+{#            var first = $(this).val().substr(0, 9);#}
+{#    #}
+{#            $(this).val(first + '-' + lastfour);#}
+{#        }#}
+{#    });#}
+{#    function getPhoneCodeByCountry(country) {#}
+{#        switch (country) {#}
+{#            case "Кыргызстан":#}
+{#                return "(999) 999 999 999";#}
+{#                break;#}
+{#            case "Казакстан":#}
+{#                return "(7) 999 999 999";#}
+{#                break;#}
+{#            default:#}
+{#                return "(999) 999 999 999";#}
+{#                break;#}
+{#        }#}
+{#    }#}
+{#    #}
+{#    #}
+{#    var a = document.getElementById('id_master-country');#}
+{#    a.addEventListener('change', function () {#}
+{#        m = getPhoneCodeByCountry(this.value);#}
+{#        console.log(m, "---", this.value, "++++++++++++++++++++++++++++++++");#}
+{#        $("#id_master-phone_number").mask(m);#}
+{#    #}
+{#    }, false);#}
+{#</script>#}
+{% endblock %}

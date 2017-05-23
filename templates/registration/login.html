@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% if form.errors %}
+<p>Имя или пароль неверны. Я не знаю что из них, так что советую перепроверить оба поля. Проверь также CapsLook и язык ввода</p>
+{% endif %}
+
+{% if next %}
+    {% if user.is_authenticated %}
+    <p>Нет права смотреть эту страницу. За правами обратиться к админу или войди под пользователем с требуемыми правами</p>
+    {% else %}
+    <p>Только авторизованные пользователи могут просматривать эту страницу.</p>
+    {% endif %}
+{% endif %}
+
+<form method="post" action="{% url 'login' %}">
+{% csrf_token %}
+<table class="table-responsive0" width="20%">
+    <tr>
+        <th> <label for="{{ form.username.id_for_label }}">Логин:</label></th>
+        <td>{{ form.username }}</td>
+    </tr>
+    <tr>
+        <th>    <label for="{{ form.password.id_for_label }}">Пароль:</label></th>
+        <td>{{ form.password }}</td>
+    </tr>
+</table>
+
+<div>
+  <input  class="btn btn-primary"  type="submit" value="Войти" />
+  <input type="hidden" name="next" value="" />
+</div>
+</form>
+
+{# Assumes you setup the password_reset view in your URLconf #}
+<p><a href="{% url 'password_reset' %}">Забыл пароль?</a></p>
+
+{% endblock %}

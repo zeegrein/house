@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Удаление дизайнера</h1>
+
+<p>Ты точно уверен(а) в том, что хочешь удалить этого дизайнера:  {{ designers.name}}?</p>
+
+
+<form action="" method="POST">
+  {% csrf_token %}
+  <input type="submit" action="" value="Удалить" />
+</form>
+
+{% endblock %}

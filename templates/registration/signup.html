@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Регистрация</h2>
+  <form method="post" id="signupform">
+    {% csrf_token %}
+    {% for field in form %}
+      <p>
+        {{ field.label_tag }}<br>
+        {{ field }}
+        {% if field.help_text %}
+          <small style="color: grey">{{ field.help_text }}</small>
+        {% endif %}
+        {% if field.label == 'Подтвердите пароль' %}
+            <span id='message'></span>
+        {% endif %}
+        {% for error in field.errors %}
+          <p style="color: red">{{ error }}</p>
+        {% endfor %}
+      </p>
+    {% endfor %}
+    <button class="btn btn-group-lg" type="submit">Зарегистрироваться</button>
+  </form>
+    <script>
+{#    $('#id_password1, #id_password2').on('keyup', function () {#}
+{#    if ($('#id_password1').val() == $('#id_password2').val()) {#}
+{#        $('#message').html('Matching').css('color', 'green');#}
+{#    } else#}
+{#        $('#message').html('Not Matching').css('color', 'red');#}
+{#    });#}
+
+    $("#signupform").validate({
+        errorClass: "my-error-class",
+{#        validClass: "my-valid-class",#}
+
+       rules: {
+           password1: {
+             required: true,
+                minlength: 8
+
+           } ,
+
+               password2: {
+                equalTo: "#id_password1",
+                 minlength: 8
+           }
+
+
+       },
+    messages:{
+     password: {
+             required:"Пароль обязателен"
+
+           }
+    }
+
+    });
+    </script>
+{% endblock %}

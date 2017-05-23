@@ -1,0 +1,281 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2> Мастер
+    {% if master.second_name %}
+        {{ master.second_name }}  {{ master.first_name }}
+    {% elif master.middle_name %}
+        {{ master.first_name }} {{ master.middle_name }}
+    {% else %}
+        {{ master.first_name }}
+    {% endif %}
+</h2>
+    <table class="price-list-table" width="50%" cellspacing="0" cellpadding="4" border="1">
+        <tr>
+            <th>ФИО</th>
+            <td><a href="{% url 'masters:price' master.id %}">
+                {% if master.second_name %}
+                    {{ master.second_name }}  {{ master.first_name }}
+                {% elif master.middle_name %}
+                    {{ master.first_name }} {{ master.middle_name }}
+                {% else %}
+                    {{ master.first_name }}
+                {% endif %}</a>
+            </td>
+        </tr>
+        <tr>
+            <th>Телефон</th>
+            <td>  {{ master.phone_number }} </td>
+        </tr>
+        <tr>
+            <th>email</th>
+            <td>   {{ master.email }}</td>
+        </tr>
+        <tr>
+            <th>Страна</th>
+            <td> {{ master.country }}</td>
+        </tr>
+        <tr>
+            <th>Город</th>
+
+            <td> {{ master.city }}</td>
+        </tr>
+        <tr>
+            <th>Опыт</th>
+            <td> {{ master.experience}}</td>
+        </tr>
+        <tr>
+            <th>Дополнительная информация</th>
+            {% if not master.additional_info %}
+                <td> {{ master.additional_info|yesno:", Жадный до информации мастер не предоставил доп.инфу о себе" }}</td>
+            {% else %}
+            <td> {{ master.additional_info }}</td>
+            {% endif %}
+        </tr>
+    </table>
+    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+    {% if master.priceforremodeling %}
+
+        <h2> Дома, квартиры и общественные помещения </h2>
+
+        <table class="price-list-table" width="50%" cellspacing="0" cellpadding="1" border="1">
+            <tr>
+                <th>Капитальный ремонт без перепланировки m2</th>
+                <td>  {{  master.priceforremodeling.get_overhaul }}</td>
+            </tr>
+            <tr>
+                <th>Косметический ремонт m2</th>
+                <td>  {{  master.priceforremodeling.get_remodeling }} </td>
+            </tr>
+            <tr>
+                <th>Частичный ремонт m2</th>
+                <td>   {{  master.priceforremodeling.get_party_remodeling  }}</td>
+            </tr>
+        </table>
+    {% endif %}
+
+    {% if master.priceforwallsandceiling %}
+
+        <h2> Отделка потолков,  стен</h2>
+
+        <table class="price-list-table" width="50%" cellspacing="0" cellpadding="4" border="1">
+            <tr>
+                <th>Выравнивание потолка m2</th>
+                <td>  {{ master.priceforwallsandceiling.get_alignment }}</td>
+            </tr>
+            <tr>
+                <th>Штукатурка потолка, стен m2</th>
+                <td>  {{ master.priceforwallsandceiling.get_plaster }} </td>
+            </tr>
+            <tr>
+                <th>Шпатлевка и шлифовка потолка, стен под окраску m2</th>
+                <td>   {{ master.priceforwallsandceiling.get_putty  }}</td>
+            </tr>
+            <tr>
+                <th>Грунтовка потолка, стены m2</th>
+                <td>   {{ master.priceforwallsandceiling.get_undercoat  }}</td>
+            </tr>
+            <tr>
+                <th>Покраска потолка, стен m2</th>
+                <td>   {{ master.priceforwallsandceiling.get_colorizing_ceil_and_walls  }}</td>
+            </tr>
+            <tr>
+                <th>Установка потолочного плинтуса m2</th>
+                <td>   {{ master.priceforwallsandceiling.get_ceiling_skirting_boards  }}</td>
+            </tr>
+            <tr>
+                <th>Поклейка обоев</th>
+                <td>   {{ master.priceforwallsandceiling.get_wallpaper  }}</td>
+            </tr>
+            </table>
+
+    {% endif %}
+
+
+    {% if  master.pricefortiling %}
+
+    <h2> Плиточные работы</h2>
+
+    <table class="price-list-table" width="50%" cellspacing="0" cellpadding="4" border="1">
+        <tr>
+            <th>Подготовка поверхности</th>
+            <td>  {{  master.pricefortiling.get_surface_preparation }}</td>
+        </tr>
+        <tr>
+            <th>Укладка плитки</th>
+            <td>  {{  master.pricefortiling.get_tailing }} </td>
+        </tr>
+        <tr>
+            <th>Санузел под ключ</th>
+            <td>   {{  master.pricefortiling.get_bathroom_fully  }}</td>
+        </tr>
+        <tr>
+            <th>Укладка керамогранита</th>
+            <td>   {{  master.pricefortiling.get_stacking_of_porcelain_tiles  }}</td>
+        </tr>
+        <tr>
+            <th>Укладка мозайки</th>
+            <td>   {{  master.pricefortiling.get_stacking_of_maze  }}</td>
+        </tr>
+        <tr>
+            <th>Затирка швов</th>
+            <td>   {{  master.pricefortiling.get_grout  }}</td>
+        </tr>
+    </table>
+    {% endif %}
+
+{#    <table class="price-list-table" width="80%" cellspacing="0" cellpadding="4" border="1">#}
+{#        <tr>#}
+{#            <th>ФИО</th>#}
+{#            <th>Телефон</th>#}
+{#            <th>email</th>#}
+{#            <th>Страна</th>#}
+{#            <th>Город</th>#}
+{#            <th>Опыт</th>#}
+{#            <th>Дополнительная информация</th>#}
+{##}
+{#        </tr>#}
+{#        <tr><td><li><a href="{% url 'masters:price' master.id %}">{{ master.first_name }}  {{ master.second_name }} {{ master.middle_name }}</a></li></td>#}
+{#            <td>  {{ master.phone_number }} </td>#}
+{#            <td>   {{ master.email }}</td>#}
+{#            <td> {{ master.country }}</td>#}
+{#            <td>  {{ master.city }}</td>#}
+{#            <td> {{ master.get_experience }}</td>#}
+{#            {% if not master.additional_info %}#}
+{#                <td> {{ master.additional_info|yesno:", Жадный до информации мастер не предоставил доп.инфу о себе" }}</td>#}
+{#            {% else %}#}
+{#            <td> {{ master.additional_info }}</td>#}
+{#            {% endif %}#}
+{#        </tr>#}
+{#    </table>#}
+{#    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}#}
+{#    {% if master.priceforremodeling %}#}
+{##}
+{#        <h1> Дома, квартиры и общественные помещения </h1>#}
+{##}
+{#        <table class="price-list-table" width="70%" cellspacing="0" cellpadding="4" border="1">#}
+{#            <tr>#}
+{#                <th>Капитальный ремонт без перепланировки m2</th>#}
+{#                <th>Косметический ремонт m2</th>#}
+{#                <th>Частичный ремонт m2</th>#}
+{##}
+{#            </tr>#}
+{#            <tr>#}
+{#                <td>  {{  master.priceforremodeling.get_overhaul }}</td>#}
+{#                <td>  {{  master.priceforremodeling.get_remodeling }} </td>#}
+{#                <td>   {{  master.priceforremodeling.get_party_remodeling  }}</td>#}
+{#            </tr>#}
+{#        </table>#}
+{#    {% endif %}#}
+{##}
+{#    {% if master.priceforwallsandceiling %}#}
+{##}
+{#        <h1> Отделка потолков,  стен</h1>#}
+{##}
+{#        <table class="price-list-table" width="70%" cellspacing="0" cellpadding="4" border="1">#}
+{#            <tr>#}
+{#                <th>Выравнивание потолка m2</th>#}
+{#                <th>Штукатурка потолка, стен m2</th>#}
+{#                <th>Шпатлевка и шлифовка потолка, стен под окраску m2</th>#}
+{#                <th>Грунтовка потолка, стены m2</th>#}
+{#                <th>Покраска потолка, стен m2</th>#}
+{#                <th>Установка потолочного плинтуса m2</th>#}
+{#                <th>Поклейка обоев</th>#}
+{##}
+{#            </tr>#}
+{#            <tr>#}
+{#                <td>  {{ master.priceforwallsandceiling.get_alignment }}</td>#}
+{#                <td>  {{ master.priceforwallsandceiling.get_plaster }} </td>#}
+{#                <td>   {{ master.priceforwallsandceiling.get_putty  }}</td>#}
+{#                <td>   {{ master.priceforwallsandceiling.get_undercoat  }}</td>#}
+{#                <td>   {{ master.priceforwallsandceiling.get_colorizing_ceil_and_walls  }}</td>#}
+{#                <td>   {{ master.priceforwallsandceiling.get_ceiling_skirting_boards  }}</td>#}
+{#                <td>   {{ master.priceforwallsandceiling.get_wallpaper  }}</td>#}
+{#            </tr>#}
+{#        </table>#}
+{##}
+{#    {% endif %}#}
+{##}
+{##}
+{#    {% if  master.pricefortiling %}#}
+{##}
+{#    <h1> Плиточные работы</h1>#}
+{##}
+{#    <table class="price-list-table" width="70%" cellspacing="0" cellpadding="4" border="1">#}
+{#        <tr>#}
+{#            <th>Подготовка поверхности</th>#}
+{#            <th>Укладка плитки</th>#}
+{#            <th>Санузел под ключ</th>#}
+{#            <th>Укладка керамогранита</th>#}
+{#            <th>Укладка мозайки</th>#}
+{#            <th>Затирка швов</th>#}
+{##}
+{##}
+{#        </tr>#}
+{#        <tr>#}
+{#            <td>  {{  master.pricefortiling.get_surface_preparation }}</td>#}
+{#            <td>  {{  master.pricefortiling.get_tailing }} </td>#}
+{#            <td>   {{  master.pricefortiling.get_bathroom_fully  }}</td>#}
+{#            <td>   {{  master.pricefortiling.get_stacking_of_porcelain_tiles  }}</td>#}
+{#            <td>   {{  master.pricefortiling.get_stacking_of_maze  }}</td>#}
+{#            <td>   {{  master.pricefortiling.get_grout  }}</td>#}
+{#        </tr>#}
+{#    </table>#}
+{##}
+{##}
+{##}
+{#    {% endif %}#}
+
+    {% if  master.cardofobjectformaster_set.all %}
+
+        <h2> Карточка объекта</h2>
+
+        <table class="price-list-table" width="70%" cellspacing="0" cellpadding="4" border="1">
+            <tr>
+                <th>description</th>
+                <th>location</th>
+                <th>Budget</th>
+                <th>Image</th>
+                <th>Types of work done</th>
+            </tr>
+            {% for param in master.cardofobjectformaster_set.all %}
+                <tr>
+                    <td>  {{ param.description }}</td>
+                    <td>  {{ param.location }} </td>
+                    <td>  ${{ param.get_budged_from }} - {{ param.get_budged_to }}</td>
+                    <td>  <img src="{{ param.image.path}}"  width="500"></td>
+                    {% if param.typesofwork_set.all %}
+                        <td>
+                            {% for type in param.typesofwork_set.all %}
+                                {{ type.work }},
+                            {% endfor %}
+                        </td>
+                    {% endif %}
+
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+
+    <a class="btn btn-danger"  href="{% url 'masters:master_delete' master.id%}">Удалить</a>
+{#    <a class="btn btn-primary" href="{% url 'masters:master_update' master.id%}">Редактировать</a>#}
+{% endblock %}

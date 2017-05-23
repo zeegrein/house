@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+<h2>Вы создаёте нового дизайнера</h2>
+
+    <form action="" method="post">
+        {% csrf_token %}
+        <table>
+        {{ form.as_table }}
+{#            {{form.as_p}}#}
+        </table>
+        <input class="btn btn-primary" type="submit" value="Сохранить" />
+
+    </form>
+{#    <a href="/designers/export/book" style="position:relative; top: 10px; left:90%">export data</a>#}
+
+
+    {% block upload %}
+    {% endblock %}
+
+{% endblock %}

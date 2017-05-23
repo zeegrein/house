@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% block content %}
+{#<h1> id - {{ designers.id }} </h1>#}
+    {% if designers.group %}
+    <h1>Компания</h1>
+    {% else %}
+    <h2> Дизайнер {{ designers.name }}</h2>
+    {% endif %}
+
+     <table class="price-list-table" width="50%" cellspacing="0" cellpadding="10" border="1">
+        <tr>
+            <th>Имя</th>
+            <td><a href="{% url 'designers:price' designers.id %}">{{ designers.name }} </a></td>
+        </tr>
+        <tr>
+            <th>Телефонный номер</th>
+            <td>  {{ designers.phone_number }} </td>
+        </tr>
+        <tr>
+            <th>email</th>
+            <td>   {{ designers.email }}</td>
+        </tr>
+        <tr>
+            <th>Адрес</th>
+            <td>  {{ designers.address }}</td>
+        </tr>
+        <tr>
+            <th>*Место оказания услуг: город или страна</th>
+            <td> {{ designers.working_area }}</td>
+        </tr>
+        <tr>
+            <th>Опыт работы, лет</th>
+            <td> {{ designers.get_experience }}</td>
+        </tr>
+        <tr>
+            <th>Удаленная работа</th>
+            <td> {{ designers.distance_work}} </td>
+        </tr>
+        <tr>
+            <th> Описание</th>
+            <td> {{ designers.description }} </td>
+        </tr>
+        <tr>
+            <th>Сайт</th>
+            <td> {{ designers.website }} </td>
+        </tr>
+        <tr>
+            <th>Сумма минимального заказа</th>
+            <td>  ${{ designers.minimal_order }}</td>
+        </tr>
+        <tr>
+            <th>Бригада</th>
+            <td> {{ designers.brigade }} </td>
+        </tr>
+    </table>
+    <h3> Цены на работы </h3>
+
+    <table class="price-list-table" width="50%" cellspacing="0" cellpadding="4" border="2">
+        <tr>
+            <th>Полный дизайн-проект</th>
+            <td>  {{ designers.pricelist.get_full_design_project }}</td>
+        </tr>
+        <tr>
+            <th>Авторский надзор</th>
+            <td>  {{ designers.pricelist.get_supervision }} </td>
+        </tr>
+        <tr>
+            <th>Декорирование помещений</th>
+            <td>  {{ designers.pricelist.get_decorating_of_premises  }}</td>
+        </tr>
+        <tr>
+            <th>Консультация</th>
+            <td>  {{ designers.pricelist.get_consulting  }}</td>
+        </tr>
+        <tr>
+            <th>Рабочий проект</th>
+            <td>  {{ designers.pricelist.get_working_project  }}</td>
+        </tr>
+            <th>3D визуализация</th>
+            <td>  {{ designers.pricelist.get_three_d_visualisation  }}</td>
+
+    </table>
+
+    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+    {% if designers.cardofobjectfordesigner_set.all %}
+
+        <h1> Designer's card of object </h1>
+
+        <table width="50%" cellspacing="0" cellpadding="4" border="2">
+            <tr>
+                <th>Описание</th>
+                <th>Местоположение</th>
+                <th>Бюджет</th>
+                <th>Фотоотчет</th>
+
+            </tr>
+            {% for price in designers.cardofobjectfordesigner_set.all %}
+                <tr>
+                    <td>  {{ price.description }}</td>
+                    <td>  {{ price.location }} </td>
+                    <td>   ${{ price.budged_from  }} - {{ price.budged_to }}</td>
+                    <td>   <img src="{{ price.three_d_visualisation.path}}"  width="500"></td>
+                </tr>
+
+            {% endfor %}
+        </table>
+    {% endif %}
+    <a class="btn btn-danger"  href="{% url 'designers:designer_delete' designers.id%}">Удалить</a>
+{#    <a class="btn btn-primary" href="{% url 'designers:designer_delete' designers.id%}">Редактировать</a>#}
+
+{% endblock %}

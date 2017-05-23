@@ -1,0 +1,115 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Дизайнеры и мастера</title>
+    <script src = "{% static 'js/jquery.min.js' %}"></script>
+    <script src="https://cloud.github.com/downloads/digitalBush/jquery.maskedinput/jquery.maskedinput-1.3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.10/jquery.mask.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.12.0/jquery.validate.js"></script>
+    <script type = "text/javascript">
+     jQuery.extend(jQuery.validator.messages, {
+    required: "Обязательно для заполнения.",
+    remote: "Поправьте данные.",
+    email: "Неверный email.",
+    url: "Please enter a valid URL.",
+    date: "Please enter a valid date.",
+    dateISO: "Please enter a valid date (ISO).",
+    number: "Введите число.",
+    digits: "Допустимы только цифры.",
+    creditcard: "Please enter a valid credit card number.",
+    equalTo: "Please enter the same value again.",
+    accept: "Please enter a value with a valid extension.",
+    maxlength: jQuery.validator.format("Пароль должен содержать максимум {0} символов."),
+    minlength: jQuery.validator.format("Пароль должен содержать минимум {0} символов."),
+    rangelength: jQuery.validator.format("Please enter a value between {0} and {1} characters long."),
+    range: jQuery.validator.format("Please enter a value between {0} and {1}."),
+    max: jQuery.validator.format("Please enter a value less than or equal to {0}."),
+    min: jQuery.validator.format("Please enter a value greater than or equal to {0}.")
+});
+    </script>
+    <!-- Core CSS - Include with every page -->
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}" />
+    <link rel="stylesheet" href="/winmarkltd-BootstrapFormHelpers-d4201db/dist/css/bootstrap-formhelpers.css">
+</head>
+<body>
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                {% if masters or master %}
+                    <a class="navbar-brand" href="/masters/list">Мастера</a>
+                {% endif %}
+
+                {% if designers %}
+                    <a class="navbar-brand" href="/designers">Дизайнеры</a>
+                {% endif %}
+                {% if not masters and not designers and not master %}
+                    <a class="navbar-brand" href="/">Дизайнеры и мастера</a>
+                {% endif %}
+            </div>
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    {% if user.is_superuser %}
+                        <li><a href="/admin">Admin</a></li>
+                    {% endif %}
+                    <li><a href="{% url 'masters:master_creation' %}">Создать мастера</a></li>
+                    <li><a href="{% url 'designers:designer_creation' %}">Создать дизайнера</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">База данных
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu" role="menu">
+{#                            <li>#}
+{#                                <a href="/home">home</a>#}
+{#                            </li>#}
+                            <li>
+                                <a href="/masters/list">Мастера</a>
+                            </li>
+                            <li>
+                                <a href="/designers">Дизайнеры</a>
+                            </li>
+{#                            <li class="divider"></li>#}
+{#                            <li>#}
+{#                                <a href="#">Separated link</a>#}
+{#                            </li>#}
+{#                            <li class="divider"></li>#}
+{#                            <li>#}
+{#                                <a href="/logout">Logout</a>#}
+{#                            </li>#}
+                        </ul>
+                    </li>
+                    {% if user.is_authenticated %}
+                        <li><a>Пользователь: {{ user.get_username }}</a></li>
+                        <li><a href="{% url 'logout'%}?next={{request.path}}">Logout</a></li>
+                    {% else %}
+                        <li><a href="/signup">Регистрация</a></li>
+                        <li><a href="{% url 'login'%}?next={{request.path}}">Login</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    {% block content %}
+    {% endblock %}
+
+    <!-- Core Scripts - Include with every page -->
+    <script src = "{% static 'js/jquery.min.js' %}"></script>
+    <script src = "{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="/winmarkltd-BootstrapFormHelpers-d4201db/dist/js/bootstrap-formhelpers.min.js"></script>
+
+    {% block javascript %}
+    {% endblock %}
+
+</body>
+</html>

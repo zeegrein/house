@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>start page</title>
+</head>
+<body>
+
+{% if user.is_authenticated %}
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'masters/style.css' %}" />
+{% endif %}
+
+{% if latest_question_list %}
+    <ul>
+    {% for question in latest_question_list %}
+        <li><a href="{% url 'masters:detail' question.id %}">{{ question.question_text }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No masters are available.</p>
+{% endif %}
+
+    {% block content %}
+    {% endblock %}
+</body>
+</html>

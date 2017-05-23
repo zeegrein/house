@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+<div class="container-fluid">
+
+    {% if  perms.designers.add_designers %}
+    <div><a class="btn btn-primary" href="{% url 'designers:designer_creation' %}">Создать нового дизайнера</a></div>
+    {% endif %}
+    {% if designers %}
+
+        <table class="table-md" width="100%" cellspacing="0" cellpadding="10" border="1">
+            <tr>
+                <th>№</th>
+                <th>Имя</th>
+                <th>Телефонный номер</th>
+                <th>email</th>
+                <th>Адрес</th>
+                <th>Место оказания услуг</th>
+                <th class="td-center">Опыт работы, лет</th>
+                <th>Удаленная работа</th>
+                <th> Описание</th>
+                <th>Сайт</th>
+                <th>Сумма минимального заказа</th>
+                <th>Бригада</th>
+
+            </tr>
+            {% for designer in designers %}
+                <tr><td><span> {{ forloop.counter }}</span></td>
+                    <td><a href="{% url 'designers:price' designer.id %}">{{ designer.name }} </a></td>
+                    <td>  {{ designer.phone_number }} </td>
+                    <td>   {{ designer.email }}</td>
+                    <td>  {{ designer.address }}</td>
+                    <td> {{ designer.working_area }}</td>
+                    <td class="td-center"> {{ designer.get_experience }}</td>
+                    <td> {{ designer.distance_work|yesno:"Есть возможность, - "}} </td>
+                    <td> {{ designer.description }} </td>
+                    <td> {{ designer.website }} </td>
+                    <td>  ${{ designer.minimal_order }}</td>
+                    {% if not designer.brigade %}
+                    <td> {{ designer.brigade|yesno:", Нет " }} </td>
+                    {% else %}
+                    <td> {{ designer.brigade }} </td>
+                    {% endif %}
+                    </tr>
+            {% endfor %}
+        </table>
+        <a href="/designers/export/book">Экспортировать в excel</a>
+    {% else %}
+        <p>No designers are available.</p>
+    {% endif %}
+        {% block upload %}
+        {% endblock %}
+</div>
+{% endblock %}
