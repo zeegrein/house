@@ -14,7 +14,7 @@ class Designers(models.Model):
     # second_name = models.CharField(max_length=200)
     # middle_name = models.CharField(max_length=200)
     # phone_number = models.CharField("Телефон", max_length=200, validators=[phone_regex], blank=True)
-    phone_number = PhoneNumberField("Телефон", max_length=200, blank=True)
+    phone_number = models.CharField("Телефон", max_length=200, blank=True)
     email = models.CharField(max_length=200, validators=[validators.validate_email], blank=True)
     address = models.CharField("Адрес", max_length=500)
     working_area = models.CharField("Место оказания услуг", max_length=500)
