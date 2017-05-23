@@ -18,10 +18,10 @@
                     {% if field.help_text %}
                     <small style="color: grey">{{ field.help_text }}</small>
                     {% endif %}
-                    {% if field.name == 'phone_number' %}
-                        <input type="text" class="input-medium bfh-phone" data-format="+1 (ddd) ddd-dddd" name="master-phone_number" maxlength="200" id="id_master-phone_number" required="">
-                        <span id='message'>works</span>
-                    {% endif %}
+{#                    {% if field.name == 'phone_number' %}#}
+{#                        <input type="text" class="input-medium bfh-phone" data-format="+1 (ddd) ddd-dddd" name="master-phone_number" maxlength="200" id="id_master-phone_number" required="">#}
+{#                        <span id='message'>works</span>#}
+{#                    {% endif %}#}
                     {% for error in field.errors %}
                     <p style="color: red">{{ error }}</p>
                     {% endfor %}
