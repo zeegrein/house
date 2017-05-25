@@ -48,7 +48,7 @@ class Master(models.Model):
     email = models.CharField(max_length=200, validators=[validators.validate_email], null=True, blank=True,
                              help_text='электронная почта')
     city = models.CharField('Город', max_length=200)
-    country = models.CharField('Страна', max_length=200, choices=STATUS_CHOICES, default=1)
+    country = models.CharField('Страна', max_length=200, choices=STATUS_CHOICES, default='Кыргызстан')
     experience = models.DateField('Опыт работы', null=True, blank=True, default=None,
                                   help_text='с какого года или сколько полных лет')
     additional_info = models.CharField('Дополнительная информация', max_length=1000, null=True, blank=True,
@@ -58,13 +58,6 @@ class Master(models.Model):
 
     def get_experience(self):
         return num_years(self.experience)
-
-        # def save(self, *args, **kwargs):
-        #     for var in vars(self):
-        #         if not var.startswith('_'):
-        #             if self.__dict__[var] == '':
-        #                 self.__dict__[var] = None
-        #     super(Master, self).save(*args, **kwargs)
 
 
 class PriceForRemodeling(models.Model):
@@ -102,7 +95,7 @@ class PriceForRemodeling(models.Model):
 
 
 class PriceForWallsAndCeiling(models.Model):
-    master = models.OneToOneField(Master, on_delete=models.CASCADE)
+    master = models.OneToOneField(Master, on_delete=models.CASCADE, primary_key=True)
     alignment = models.IntegerField('Выравнивание', blank=True, null=True)
     plaster = models.IntegerField('Штукатурка', blank=True, null=True)  # штукатурка
     putty = models.IntegerField('Шпатлевка и шлифовка под окраску', blank=True, null=True)  # шпатлевка
@@ -176,7 +169,7 @@ class PriceForWallsAndCeiling(models.Model):
 
 
 class PriceForTiling(models.Model):
-    master = models.OneToOneField(Master, on_delete=models.CASCADE, unique=True)
+    master = models.OneToOneField(Master, on_delete=models.CASCADE, primary_key=True)
     surface_preparation = models.IntegerField('Подготовка поверхности', blank=True, null=True)
     tailing = models.IntegerField('Укладка плитки', blank=True, null=True)
     bathroom_fully = models.IntegerField('Санузел под ключ', blank=True, null=True)

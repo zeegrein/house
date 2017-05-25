@@ -16,13 +16,13 @@ from django.http import HttpResponseBadRequest
 from django import forms
 from django.template import RequestContext
 import django_excel as excel
-from .forms import DesignerCreationMultiForm, PriceListForm, DesignerEditMultiForm
+from .forms import DesignerCreationMultiForm, PriceListForm
 from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.models import Permission
 
 
-# @permission_required('can_edit_designer')
+# @permission_required('can_edit_designers')
 # def renew_book_librarian(request, pk):
 #     book_inst = get_object_or_404(Designers, id=pk)
 #
@@ -75,6 +75,10 @@ class DesignerCreationView(PermissionRequiredMixin, CreateView):
         except ValueError:
             try:
                 years = int(datetime.datetime.strptime(form.data['designers-experience'], "%Y-%m").date().year)
+                month = int(datetime.datetime.strptime(form.data['designers-experience'], "%Y-%m").date().month)
+                form.data['designers-experience'] = datetime.datetime.strptime(str(years) + "-" + str(month),
+                                                                              "%Y-%m").date()
+                return self.send_form(form)
             except ValueError:
                 try:
                     years = int(form.data['designers-experience'])
@@ -86,10 +90,8 @@ class DesignerCreationView(PermissionRequiredMixin, CreateView):
             else:
                 form.data['designers-experience'] = datetime.datetime.strptime(str(years), "%Y").date()
         request.POST._mutable = False
-        if form.is_valid():
-            return self.form_valid(form)
-        else:
-            return self.form_invalid(form)
+
+        return self.send_form(form)
 
     def form_valid(self, form):
         # Save the designer first, because the price_list needs a designer before it
@@ -99,6 +101,12 @@ class DesignerCreationView(PermissionRequiredMixin, CreateView):
         price_list.designer = designer
         price_list.save()
         return redirect(self.get_success_url())
+
+    def send_form(self, form):
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
 
 
 class DesignerCreate(PermissionRequiredMixin, CreateView):
@@ -111,19 +119,54 @@ class DesignerCreate(PermissionRequiredMixin, CreateView):
         return reverse('designers:price', kwargs={'pk': self.object.id})
 
 
-class DesignerUpdate(UpdateView):
+class DesignerUpdate(PermissionRequiredMixin, UpdateView):
+    permission_required = 'designers.add_designers'
     model = Designers
-    form_class = DesignerEditMultiForm
+    form_class = DesignerCreationMultiForm
 
-    # success_url = reverse_lazy('masters:main')
+    def send_form(self, form):
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        request.POST._mutable = True
+        form_class = self.get_form_class()
+        form = self.get_form(form_class)
+        try:
+            years = int(datetime.datetime.strptime(form.data['designers-experience'], "%Y-%m-%d").date().year)
+            month = int(datetime.datetime.strptime(form.data['designers-experience'], "%Y-%m-%d").date().month)
+            day = int(datetime.datetime.strptime(form.data['designers-experience'], "%Y-%m-%d").date().day)
+            form.data['designers-experience'] = datetime.datetime.strptime(str(years) + "-" + str(month) + '-' + str(day), "%Y-%m-%d").date()
+            return self.send_form(form)
+        except ValueError:
+            try:
+                years = int(datetime.datetime.strptime(form.data['designers-experience'], "%Y-%m").date().year)
+                month = int(datetime.datetime.strptime(form.data['designers-experience'], "%Y-%m").date().month)
+                form.data['designers-experience'] = datetime.datetime.strptime(str(years)+"-"+str(month), "%Y-%m").date()
+                return self.send_form(form)
+            except ValueError:
+                try:
+                    years = int(form.data['designers-experience'])
+                except ValueError:
+                    years = -1
+        if years > 0:
+            if years < 100:
+                form.data['designers-experience'] = years_ago(int(form.data['designers-experience']))
+            else:
+                form.data['designers-experience'] = datetime.datetime.strptime(str(years), "%Y").date()
+        request.POST._mutable = False
+        return self.send_form(form)
 
     def get_success_url(self):
-        return reverse('designers:price', kwargs={'pk': self.object['designer'].id})
+        return reverse('designers:price', kwargs={'pk': self.object['designers'].id})
 
     def get_form_kwargs(self):
         kwargs = super(DesignerUpdate, self).get_form_kwargs()
         kwargs.update(instance={
-            'designer': self.object,
+            'designers': self.object,
             'price_list': self.object.pricelist,
         })
         return kwargs
@@ -167,7 +210,7 @@ class MainView(generic.ListView):
     #             mapdicts=[
     #                 ['name', 'phone_number', 'email', 'address', 'working_area', 'distance_work', 'experience',
     #                  'website', 'minimal_order', 'description', 'brigade'],
-    #                 ['designer', 'full_design_project', 'supervision', 'decorating_of_premises', 'working_project',
+    #                 ['designers', 'full_design_project', 'supervision', 'decorating_of_premises', 'working_project',
     #                  'three_d_visualization']]
     #         )
     #         return HttpResponse(template.render(context, request))
@@ -263,7 +306,5 @@ def years_ago(years, from_date=None):
     try:
         return from_date.replace(year=from_date.year - years, day=from_date.day-1)
     except ValueError:
-        # Must be 2/29!
-        assert from_date.month == 2 and from_date.day == 29
-        return from_date.replace(month=2, day=28,
+        return from_date.replace(month=from_date.month-1, day=28,
                                  year=from_date.year - years)

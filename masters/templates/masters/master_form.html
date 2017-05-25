@@ -1,193 +1,83 @@
 {% extends 'base.html' %}
 {% block content %}
 {% load static %}
-
-<form action="" method="post" enctype="multipart/form-data">
+<h2>Вы редактируете мастера {{ master.first_name }}</h2>
+<form action="" method="post">
     {% csrf_token %}
+    {% if perms.masters.change_master%}
+
     <div>
-         <table>
-        {{ form.as_table }}
-             {{ price_for_remodeling_form.as_table }}
-             {{ price_for_wall_and_ceiling_form.as_table }}
-{#            {{form.as_p}}#}
-{#            <tbody>#}
-{#                <tr>#}
-{#                    <th>#}
-{#                        <label for="id_first_name">First name:</label>#}
-{#                    </th>#}
-{#                    <td>#}
-{#                        <input type="text" name="first_name" maxlength="200" id="id_first_name" required="">#}
-{#                    </td>#}
-{#                </tr>#}
-{#                <tr>#}
-{#                    <th>#}
-{#                        <label for="id_second_name">Second name:</label>#}
-{#                    </th>#}
-{#                    <td>#}
-{#                        <input type="text" name="second_name" maxlength="200" id="id_second_name">#}
-{#                    </td>#}
-{#                </tr>#}
-{#                <tr>#}
-{#                    <th>#}
-{#                        <label for="id_middle_name">Middle name:</label>#}
-{#                    </th>#}
-{#                    <td>#}
-{#                        <input type="text" name="middle_name" maxlength="200" id="id_middle_name">#}
-{#                    </td>#}
-{#                </tr>#}
-{#                <tr>#}
-{#                    <th>#}
-{#                        <label for="id_phone_number">Phone number:</label>#}
-{#                    </th>#}
-{#                    <td>#}
-{#                        <input type="text" name="phone_number" maxlength="200" id="id_phone_number" required="">#}
-{#                    </td>#}
-{#                </tr>#}
-{#                <tr>#}
-{#                    <th>#}
-{#                        <label for="id_email">Email:</label>#}
-{#                    </th>#}
-{#                    <td>#}
-{#                        <input type="text" name="email" maxlength="200" id="id_email">#}
-{#                    </td>#}
-{#                </tr>#}
-{#                <tr>#}
-{#                    <th>#}
-{#                        <label for="id_city">City:</label>#}
-{#                    </th>#}
-{#                    <td>#}
-{#                        <input type="text" name="city" maxlength="200" id="id_city" required="">#}
-{#                    </td>#}
-{#                </tr>#}
-{#                <tr>#}
-{#                    <th>#}
-{#                        <label for="id_country">Country:</label>#}
-{#                    </th>#}
-{#                    <td>#}
-{#                        <input type="text" name="country" maxlength="200" id="id_country" required="">#}
-{#                    </td>#}
-{#                </tr>#}
-{#                <tr>#}
-{#                    <th>#}
-{#                        <label for="id_experience">Experience:</label>#}
-{#                    </th>#}
-{#                    <td>#}
-{#                        <input type="text" name="experience" value="2017-05-16" id="id_experience" required="">#}
-{#                        <input type="hidden" name="initial-experience" value="2017-05-16" id="initial-id_experience">#}
-{#                    </td>#}
-{#                </tr>#}
-{#                <tr>#}
-{#                    <th>#}
-{#                        <label for="id_additional_info">Additional info:</label>#}
-{#                    </th>#}
-{#                    <td>#}
-{#                        <input type="text" name="additional_info" maxlength="1000" id="id_additional_info">#}
-{#                    </td>#}
-{#                </tr>#}
-{#                <tr>#}
-{#                    <th>#}
-{#                        <label for="id_overhaul">Overhaul:</label>#}
-{#                    </th>#}
-{#                    <td>#}
-{#                        <input type="number" name="overhaul" value="0" id="id_overhaul" required="">#}
-{#                    </td>#}
-{#                </tr>#}
-{#                <tr>#}
-{#                    <th>#}
-{#                        <label for="id_remodeling">Remodeling:</label>#}
-{#                    </th>#}
-{#                    <td>#}
-{#                        <input type="number" name="remodeling" value="0" id="id_remodeling" required="">#}
-{#                    </td>#}
-{#                </tr>#}
-{#                <tr>#}
-{#                    <th>#}
-{#                        <label for="id_party_remodeling">Party remodeling:</label>#}
-{#                    </th>#}
-{#                    <td>#}
-{#                        <input type="number" name="party_remodeling" value="0" id="id_party_remodeling" required="">#}
-{#                    </td>#}
-{#                </tr>#}
-{#                <tr>#}
-{#                    <th>#}
-{#                        <label for="id_alignment">Alignment:</label>#}
-{#                    </th>#}
-{#                    <td>#}
-{#                        <input type="number" name="alignment" value="0" id="id_alignment" required="">#}
-{#                    </td>#}
-{#                </tr>#}
-{#                <tr>#}
-{#                    <th>#}
-{#                        <label for="id_plaster">Plaster:</label>#}
-{#                    </th>#}
-{#                    <td>#}
-{#                        <input type="number" name="plaster" value="0" id="id_plaster" required="">#}
-{#                    </td>#}
-{#                </tr>#}
-{#                <tr>#}
-{#                    <th>#}
-{#                        <label for="id_putty">Putty:</label>#}
-{#                    </th>#}
-{#                    <td>#}
-{#                        <input type="number" name="putty" value="0" id="id_putty" required="">#}
-{#                    </td>#}
-{#                </tr>#}
-{#                <tr>#}
-{#                    <th>#}
-{#                        <label for="id_undercoat">Undercoat:</label>#}
-{#                    </th>#}
-{#                    <td>#}
-{#                        <input type="number" name="undercoat" value="0" id="id_undercoat" required="">#}
-{#                    </td>#}
-{#                </tr>#}
-{#                <tr>#}
-{#                    <th>#}
-{#                        <label for="id_colorizing_ceil_and_walls">Colorizing ceil and walls:</label>#}
-{#                    </th>#}
-{#                    <td>#}
-{#                        <input type="number" name="colorizing_ceil_and_walls" value="0" id="id_colorizing_ceil_and_walls" required="">#}
-{#                    </td>#}
-{#                </tr>#}
-{#                <tr>#}
-{#                    <th>#}
-{#                        <label for="id_ceiling_skirting_boards">Ceiling skirting boards:</label>#}
-{#                    </th>#}
-{#                    <td>#}
-{#                        <input type="number" name="ceiling_skirting_boards" value="0" id="id_ceiling_skirting_boards" required="">#}
-{#                    </td>#}
-{#                </tr>#}
-{#                <tr>#}
-{#                    <th>#}
-{#                        <label for="id_wallpaper">Wallpaper:</label>#}
-{#                    </th>#}
-{#                    <td>#}
-{#                        <input type="number" name="wallpaper" value="0" id="id_wallpaper" required="">#}
-{#                    </td>#}
-{#                </tr>#}
-{#                {% for designer_field in price_for_remodeling %}#}
-{#                    <li>{{ designer_field.get_overhaul }}</li>#}
-{#                {% endfor %}#}
-{#            </tbody>#}
+        <table>
+{#        {{ form.as_table }}#}
+            {% for field in form %}
+            <div class="master-creation">
+                <div class="master-creation-label">
+                    {{ field.label_tag }}
+
+                </div>
+                <div class="master-creation-field">
+                    {{ field }}
+                    {% if field.help_text %}
+                    <small style="color: grey">{{ field.help_text }}</small>
+                    {% endif %}
+{#                    {% if field.name == 'phone_number' %}#}
+{#                        <input type="text" class="input-medium bfh-phone" data-format="+1 (ddd) ddd-dddd" name="master-phone_number" maxlength="200" id="id_master-phone_number" required="">#}
+{#                        <span id='message'>works</span>#}
+{#                    {% endif %}#}
+                    {% for error in field.errors %}
+                    <p style="color: red">{{ error }}</p>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
         </table>
+        <input class="btn btn-primary" type="submit" value="Сохранить"/>
     </div>
-{#    <fieldset>#}
-{#        <legend>Прайс лист</legend>#}
-{#        {{ price_for_remodeling_form.management_form }}#}
-{#        {{ price_for_remodeling_form.non_form_errors }}#}
-{#        {% for form in price_for_remodeling_form %}#}
-{#            {{ form.id }}#}
-{#            <div class="inline {{ ingredient_form.prefix }}">#}
-{#                {{ form.description.errors }}#}
-{#                {{ form.description.label_tag }}#}
-{#                {{ form.description }}#}
-{#            </div>#}
-{#        {% endfor %}#}
-{#    </fieldset>#}
-    <input type="submit" value="Сохранить" style="border-radius: 5px;
-        border: 0;
-        font-family: Tahoma,serif;
-        background: #f4f4f4;" />
+    {% endif %}
 </form>
 {% block upload %}
 {% endblock %}
+{#<script type="text/javascript">#}
+{##}
+{#jQuery(function($){#}
+{#   $("#id_master-phone_number").mask("+(999) 999 999 999",{placeholder:" "});#}
+{#{);#}
+{#    var m = getPhoneCodeByCountry("");#}
+{#    $("#id_master-phone_number").mask(m);#}
+{##}
+{##}
+{#    $("#id_master-phone_number").on("blur", function () {#}
+{#        var last = $(this).val().substr($(this).val().indexOf("-") + 1);#}
+{##}
+{#        if (last.length == 3) {#}
+{#            var move = $(this).val().substr($(this).val().indexOf("-") - 1, 1);#}
+{#            var lastfour = move + last;#}
+{##}
+{#            var first = $(this).val().substr(0, 9);#}
+{##}
+{#            $(this).val(first + '-' + lastfour);#}
+{#        }#}
+{#    });#}
+{#    function getPhoneCodeByCountry(country) {#}
+{#        switch (country) {#}
+{#            case "Кыргызстан":#}
+{#                return "(999) 999 999 999";#}
+{#                break;#}
+{#            case "Казахстан":#}
+{#                return "(7) 999 999 999";#}
+{#                break;#}
+{#            default:#}
+{#                return "(999) 999 999 999";#}
+{#                break;#}
+{#        }#}
+{#    }#}
+{##}
+{##}
+{#    var a = document.getElementById('id_master-country');#}
+{#    a.addEventListener('change', function () {#}
+{#        m = getPhoneCodeByCountry(this.value);#}
+{#        console.log(m, "---", this.value, "++++++++++++++++++++++++++++++++");#}
+{#           $("#id_master-phone_number").mask(m,{placeholder:" "});#}
+{#    }, false);#}
+{#</script>#}
 {% endblock %}

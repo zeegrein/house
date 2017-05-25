@@ -15,7 +15,7 @@ from django.utils import timezone
 from django.views import generic
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
-from masters.forms import PriceForRemodelingFormSet, PriceForWallsAndCeilingFormSet, MasterForm, MasterEditMultiForm
+from masters.forms import PriceForRemodelingFormSet, PriceForWallsAndCeilingFormSet, MasterForm
 from .forms import MasterCreationMultiForm, PriceForRemodelingForm, PriceForWallsAndCeilingForm
 from .models import Question, Choice, Master, PriceForRemodeling, PriceForWallsAndCeiling
 
@@ -215,16 +215,10 @@ class MasterCreate(CreateView):
 
 class MasterUpdate(UpdateView):
     model = Master
-    form_class = MasterEditMultiForm
-
-    # success_url = reverse_lazy('masters:main')
+    form_class = MasterCreationMultiForm
 
     def get_success_url(self):
         return reverse('masters:price', kwargs={'pk': self.object['master'].id})
-
-    # fields = ['first_name', 'second_name', 'middle_name', 'phone_number', 'email', 'city', 'country', 'experience',
-    #           'additional_info']
-    # fields = '__all__'
 
     def get_form_kwargs(self):
         kwargs = super(MasterUpdate, self).get_form_kwargs()
@@ -232,8 +226,45 @@ class MasterUpdate(UpdateView):
             'master': self.object,
             'price_for_remodeling': self.object.priceforremodeling,
             'price_for_walls_and_ceiling': self.object.priceforwallsandceiling,
+            'price_for_tiling': self.object.pricefortiling,
         })
         return kwargs
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        request.POST._mutable = True
+        form_class = self.get_form_class()
+        form = self.get_form(form_class)
+        try:
+            years = int(datetime.datetime.strptime(form.data['master-experience'], "%Y-%m-%d").date().year)
+            month = int(datetime.datetime.strptime(form.data['master-experience'], "%Y-%m-%d").date().month)
+            day = int(datetime.datetime.strptime(form.data['master-experience'], "%Y-%m-%d").date().day)
+            form.data['master-experience'] = datetime.datetime.strptime(str(years) + "-" + str(month) + '-' + str(day), "%Y-%m-%d").date()
+            return self.send_form(form)
+        except ValueError:
+            try:
+                years = int(datetime.datetime.strptime(form.data['master-experience'], "%Y-%m").date().year)
+                month = int(datetime.datetime.strptime(form.data['master-experience'], "%Y-%m").date().month)
+                form.data['master-experience'] = datetime.datetime.strptime(str(years) + "-" + str(month), "%Y-%m-%d").date()
+                return self.send_form(form)
+            except ValueError:
+                try:
+                    years = int(form.data['master-experience'])
+                except ValueError:
+                    years = -1
+        if years > 0:
+            if years < 100:
+                form.data['master-experience'] = years_ago(int(form.data['master-experience']))
+            else:
+                form.data['master-experience'] = datetime.datetime.strptime(str(years), "%Y").date()
+        request.POST._mutable = False
+        return self.send_form(form)
+
+    def send_form(self, form):
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
 
 
 class MasterDelete(DeleteView):

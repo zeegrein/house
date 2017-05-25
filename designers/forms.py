@@ -24,7 +24,6 @@ class DesignerForm(ModelForm):
         model = Designers
         widgets = {
             'description': Textarea(attrs={'cols': 40, 'rows': 5}),
-            # 'experience'
         }
         fields = (
             'group', 'name', 'phone_number', 'email', 'address', 'working_area', 'distance_work', 'experience',
@@ -48,12 +47,5 @@ class PriceListForm(ModelForm):
 class DesignerCreationMultiForm(MultiModelForm):
     form_classes = OrderedDict((
         ('designers', DesignerForm),
-        ('price_list', PriceListForm),
-    ))
-
-
-class DesignerEditMultiForm(MultiModelForm):
-    form_classes = OrderedDict((
-        ('designer', DesignerForm),
         ('price_list', PriceListForm),
     ))
