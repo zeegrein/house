@@ -11,7 +11,6 @@ from phonenumber_field.widgets import PhoneNumberPrefixWidget
 
 from designers.models import Designers, PriceList, CardOfObjectForDesigner
 
-
 date_field_errors = {
     'required': 'Это поле обязятельно для заполнения',
     'invalid': 'Введите дату в формате ГГГГ-ММ или ГГГГ или количество лет',
@@ -25,8 +24,12 @@ class DesignerForm(ModelForm):
         model = Designers
         widgets = {
             'description': Textarea(attrs={'cols': 40, 'rows': 5}),
+            # 'experience'
         }
-        fields = '__all__'
+        fields = (
+            'group', 'name', 'phone_number', 'email', 'address', 'working_area', 'distance_work', 'experience',
+            'website',
+            'minimal_order', 'description', 'brigade')
 
 
 class PriceListForm(ModelForm):

@@ -34,20 +34,24 @@
 </form>
 {% block upload %}
 {% endblock %}
-{#<script>#}
+{#<script type="text/javascript">#}
+{##}
+{#jQuery(function($){#}
+{#   $("#id_master-phone_number").mask("+(999) 999 999 999",{placeholder:" "});#}
+{#{);#}
 {#    var m = getPhoneCodeByCountry("");#}
 {#    $("#id_master-phone_number").mask(m);#}
-{#    #}
-{#    #}
+{##}
+{##}
 {#    $("#id_master-phone_number").on("blur", function () {#}
 {#        var last = $(this).val().substr($(this).val().indexOf("-") + 1);#}
-{#    #}
+{##}
 {#        if (last.length == 3) {#}
 {#            var move = $(this).val().substr($(this).val().indexOf("-") - 1, 1);#}
 {#            var lastfour = move + last;#}
-{#    #}
+{##}
 {#            var first = $(this).val().substr(0, 9);#}
-{#    #}
+{##}
 {#            $(this).val(first + '-' + lastfour);#}
 {#        }#}
 {#    });#}
@@ -56,7 +60,7 @@
 {#            case "Кыргызстан":#}
 {#                return "(999) 999 999 999";#}
 {#                break;#}
-{#            case "Казакстан":#}
+{#            case "Казахстан":#}
 {#                return "(7) 999 999 999";#}
 {#                break;#}
 {#            default:#}
@@ -64,14 +68,13 @@
 {#                break;#}
 {#        }#}
 {#    }#}
-{#    #}
-{#    #}
+{##}
+{##}
 {#    var a = document.getElementById('id_master-country');#}
 {#    a.addEventListener('change', function () {#}
 {#        m = getPhoneCodeByCountry(this.value);#}
 {#        console.log(m, "---", this.value, "++++++++++++++++++++++++++++++++");#}
-{#        $("#id_master-phone_number").mask(m);#}
-{#    #}
+{#           $("#id_master-phone_number").mask(m,{placeholder:" "});#}
 {#    }, false);#}
 {#</script>#}
 {% endblock %}

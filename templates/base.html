@@ -6,9 +6,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Дизайнеры и мастера</title>
+{#    <link rel="shortcut icon" type="image/png" href="{{STATIC_URL}}/favicon.ico"/>#}
     <script src = "{% static 'js/jquery.min.js' %}"></script>
     <script src="https://cloud.github.com/downloads/digitalBush/jquery.maskedinput/jquery.maskedinput-1.3.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.10/jquery.mask.js"></script>
+{#    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.10/jquery.mask.js"></script>#}
     <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.12.0/jquery.validate.js"></script>
     <script type = "text/javascript">
      jQuery.extend(jQuery.validator.messages, {
@@ -29,12 +30,12 @@
     range: jQuery.validator.format("Please enter a value between {0} and {1}."),
     max: jQuery.validator.format("Please enter a value less than or equal to {0}."),
     min: jQuery.validator.format("Please enter a value greater than or equal to {0}.")
-});
+     });
     </script>
     <!-- Core CSS - Include with every page -->
     <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}" />
-    <link rel="stylesheet" href="/winmarkltd-BootstrapFormHelpers-d4201db/dist/css/bootstrap-formhelpers.css">
+{#    <link rel="stylesheet" href="/winmarkltd-BootstrapFormHelpers-d4201db/dist/css/bootstrap-formhelpers.css">#}
 </head>
 <body>
     <nav class="navbar navbar-default">
@@ -106,7 +107,7 @@
     <!-- Core Scripts - Include with every page -->
     <script src = "{% static 'js/jquery.min.js' %}"></script>
     <script src = "{% static 'js/bootstrap.min.js' %}"></script>
-    <script src="/winmarkltd-BootstrapFormHelpers-d4201db/dist/js/bootstrap-formhelpers.min.js"></script>
+{#    <script src="/winmarkltd-BootstrapFormHelpers-d4201db/dist/js/bootstrap-formhelpers.min.js"></script>#}
 
     {% block javascript %}
     {% endblock %}

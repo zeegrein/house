@@ -25,7 +25,7 @@ class Designers(models.Model):
     description = models.CharField("Описание  деятельности", max_length=1000, null=True, blank=True)
     brigade = models.CharField("Своя бригада/прораб", max_length=1000, null=True, blank=True)
     group = models.BooleanField("Компания?", default=False)
-    permissions = (("can_edit_designer", "can add designer"),)
+    permissions = (("can_edit_designer",),)
 
     def get_experience(self):
         return num_years(self.experience)
