@@ -24,7 +24,7 @@
 
     </form>
     <a href="/designers/export/book" style="position:relative; top: 10px; left:90%">export data</a>
-    {% if perms.designers.can_edit_designers %}- <a href="{% url 'designers:price' bookinst.id %}">Renew</a>  {% endif %}
+    {% if perms.designers.can_edit_designers %}- <a href="{% url 'designers:price' designers.id %}">Редактировать</a>  {% endif %}
     {% block upload %}
     {% endblock %}
 {% endblock %}

@@ -9,7 +9,7 @@ import datetime  # for checking renewal date range.
 
 from phonenumber_field.widgets import PhoneNumberPrefixWidget
 
-from designers.models import Designers, PriceList, CardOfObjectForDesigner
+from designers.models import Designers, PriceList, CardOfObjectForDesigner, Photo
 
 date_field_errors = {
     'required': 'Это поле обязятельно для заполнения',
@@ -38,10 +38,16 @@ class PriceListForm(ModelForm):
                   "three_d_visualisation")
 
 
-# class CardOfObjectForDesignerForm(ModelForm):
-#     class Meta:
-#         model = CardOfObjectForDesigner
-#         fields = ('description', 'location', 'budged_from', 'budged_to', 'three_d_visualisation')
+class CardOfObjectForDesignerForm(ModelForm):
+    three_d_visualisation = forms.FileField(
+        label='Выберите файл',
+        help_text='максимальный размер 42 MB',
+        widget=forms.FileInput(attrs={'class': 'upload'})
+    )
+
+    class Meta:
+        model = CardOfObjectForDesigner
+        fields = ('description', 'location', 'budged_from', 'budged_to', 'three_d_visualisation')
 
 
 class DesignerCreationMultiForm(MultiModelForm):
@@ -49,3 +55,15 @@ class DesignerCreationMultiForm(MultiModelForm):
         ('designers', DesignerForm),
         ('price_list', PriceListForm),
     ))
+
+
+class PhotoForm(forms.ModelForm):
+    file = forms.FileField(
+        label='Выберите файл',
+        help_text='максимальный размер 42 MB',
+        widget=forms.FileInput(attrs={'class': 'upload'})
+    )
+
+    class Meta:
+        model = Photo
+        fields = ('title', 'description', 'file',)

@@ -1,12 +1,13 @@
 import datetime
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.http import JsonResponse
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.views import generic
-from .models import Designers, PriceList
+from .models import Designers, PriceList, CardOfObjectForDesigner, Photo
 from django.template import loader
 from django.http import Http404
 from django.shortcuts import get_object_or_404, render
@@ -16,7 +17,7 @@ from django.http import HttpResponseBadRequest
 from django import forms
 from django.template import RequestContext
 import django_excel as excel
-from .forms import DesignerCreationMultiForm, PriceListForm
+from .forms import DesignerCreationMultiForm, PriceListForm, CardOfObjectForDesignerForm, PhotoForm
 from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.models import Permission
@@ -49,12 +50,6 @@ from django.contrib.auth.models import Permission
 #     return render(request, 'designers/designer_form.html', {'form': form, 'bookinst': book_inst})
 
 
-data = [
-    [1, 2, 3],
-    [4, 5, 6]
-]
-
-
 class DesignerCreationView(PermissionRequiredMixin, CreateView):
     permission_required = 'designers.add_designers'
     form_class = DesignerCreationMultiForm
@@ -77,7 +72,7 @@ class DesignerCreationView(PermissionRequiredMixin, CreateView):
                 years = int(datetime.datetime.strptime(form.data['designers-experience'], "%Y-%m").date().year)
                 month = int(datetime.datetime.strptime(form.data['designers-experience'], "%Y-%m").date().month)
                 form.data['designers-experience'] = datetime.datetime.strptime(str(years) + "-" + str(month),
-                                                                              "%Y-%m").date()
+                                                                               "%Y-%m").date()
                 return self.send_form(form)
             except ValueError:
                 try:
@@ -98,9 +93,16 @@ class DesignerCreationView(PermissionRequiredMixin, CreateView):
         # can be saved.
         designer = form['designers'].save()
         price_list = form['price_list'].save(commit=False)
+        # card_of_object = form['card_of_object'].save(commit=False)
         price_list.designer = designer
         price_list.save()
-        return redirect(self.get_success_url())
+        # card_of_object.designer = designer
+        # card_of_object.save()
+        # three_d_visualisation = CardOfObjectForDesigner(
+        #     three_d_visualisation=self.get_form_kwargs().get('files')['three_d_visualisation'])
+        # three_d_visualisation.save()
+        return super(DesignerCreationView, self).form_valid(form)
+        # return redirect(self.get_success_url())
 
     def send_form(self, form):
         if form.is_valid():
@@ -139,13 +141,15 @@ class DesignerUpdate(PermissionRequiredMixin, UpdateView):
             years = int(datetime.datetime.strptime(form.data['designers-experience'], "%Y-%m-%d").date().year)
             month = int(datetime.datetime.strptime(form.data['designers-experience'], "%Y-%m-%d").date().month)
             day = int(datetime.datetime.strptime(form.data['designers-experience'], "%Y-%m-%d").date().day)
-            form.data['designers-experience'] = datetime.datetime.strptime(str(years) + "-" + str(month) + '-' + str(day), "%Y-%m-%d").date()
+            form.data['designers-experience'] = datetime.datetime.strptime(
+                str(years) + "-" + str(month) + '-' + str(day), "%Y-%m-%d").date()
             return self.send_form(form)
         except ValueError:
             try:
                 years = int(datetime.datetime.strptime(form.data['designers-experience'], "%Y-%m").date().year)
                 month = int(datetime.datetime.strptime(form.data['designers-experience'], "%Y-%m").date().month)
-                form.data['designers-experience'] = datetime.datetime.strptime(str(years)+"-"+str(month), "%Y-%m").date()
+                form.data['designers-experience'] = datetime.datetime.strptime(str(years) + "-" + str(month),
+                                                                               "%Y-%m").date()
                 return self.send_form(form)
             except ValueError:
                 try:
@@ -168,6 +172,7 @@ class DesignerUpdate(PermissionRequiredMixin, UpdateView):
         kwargs.update(instance={
             'designers': self.object,
             'price_list': self.object.pricelist,
+            # 'card_of_object': self.object.cardofobjectfordesigner_set.all,
         })
         return kwargs
 
@@ -262,19 +267,158 @@ class PriceView(generic.DetailView):
         return Designers.objects.all()
 
 
-class CardView(generic.DetailView):
-    model = Designers
+class CardOfObjectForDesignerView(CreateView):
+    model = CardOfObjectForDesigner
+    template_name = 'designers/card_of_object.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(CardOfObjectForDesignerView, self).get_context_data(**kwargs)
+        context['message'] = "создаёте"
+        return context
+
+    def get_form_class(self):
+        return CardOfObjectForDesignerForm
+
+    def get_form_kwargs(self, **kwargs):
+        kwargs = super(CardOfObjectForDesignerView, self).get_form_kwargs(**kwargs)
+        if 'data' in kwargs:
+            designer = Designers.objects.get(pk=self.kwargs['pk'])
+            instance = CardOfObjectForDesigner(designer=designer)
+            kwargs.update({'instance': instance})
+        return kwargs
+
+    def get_success_url(self):
+        return reverse('designers:price', kwargs={'pk': self.kwargs['pk']})
+
+        # def get_queryset(self):
+        #     """
+        #     Excludes any questions that aren't published yet.
+        #     """
+        #     return Designers.objects.all()
+
+
+class CardOfObjectForDesignerEditView(UpdateView):
+    model = CardOfObjectForDesigner
+    template_name = 'designers/card_of_object.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(CardOfObjectForDesignerEditView, self).get_context_data(**kwargs)
+        context['message'] = "редактируете"
+        return context
+
+    def get_form_class(self):
+        return CardOfObjectForDesignerForm
+
+    def get_success_url(self):
+        return reverse('designers:price', kwargs={'pk': self.kwargs['designer_id']})
+
+
+class CardOfObjectForDesignerDeleteView(DeleteView):
+    model = CardOfObjectForDesigner
+    template_name = 'designers/card_of_object_confirm_delete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(CardOfObjectForDesignerDeleteView, self).get_context_data(**kwargs)
+        context['designer'] = self.kwargs
+        context['message'] = 'карточку '
+
+        return context
+
+    def get_object(self, queryset=None):
+        """ Hook to ensure object is owned by request.user. """
+        obj = super(CardOfObjectForDesignerDeleteView, self).get_object()
+        return obj
+
+    def get_success_url(self):
+        return reverse('designers:price', kwargs={'pk': self.kwargs['designer_id']})
+
+
+class BasicUploadView(CreateView):
+    model = Photo
+    template_name = 'designers/basic_upload/index.html'
+
+    def get_form_class(self):
+        return PhotoForm
 
     def get_queryset(self):
         """
-        Excludes any questions that aren't published yet.
+        Return the last five published questions (not including those set to be
+        published in the future).
         """
-        return Designers.objects.all()
+        card_of_object = CardOfObjectForDesigner.objects.all()
+        return card_of_object
+
+    def get_context_data(self, **kwargs):
+        context = super(BasicUploadView, self).get_context_data(**kwargs)
+        context['designer_id'] = self.kwargs['designer_id']
+        context['pk'] = self.kwargs['pk']
+        return context
+
+    def get_form_kwargs(self, **kwargs):
+        kwargs = super(BasicUploadView, self).get_form_kwargs(**kwargs)
+        if 'data' in kwargs:
+            card_of_object = CardOfObjectForDesigner.objects.get(pk=self.kwargs['pk'])
+            instance = CardOfObjectForDesigner(card_of_object=card_of_object)
+            kwargs.update({'instance': instance})
+        return kwargs
+
+    def get(self, request, *args, **kwargs):
+        designer = Designers.objects.get(id=self.kwargs['designer_id'])
+        card_of_object = designer.cardofobjectfordesigner_set.get(id=self.kwargs['pk'])
+        photos_list = card_of_object.photo_set.all()
+        return render(self.request, 'designers/basic_upload/index.html', {'photos': photos_list,
+                                                                          'designer': designer,
+                                                                          'card_of_object': card_of_object})
+
+    def post(self, request, *args, **kwargs):
+        form = PhotoForm(self.request.POST, self.request.FILES)
+        if form.is_valid():
+            photo = form.save()
+            data = {'is_valid': True, 'name': photo.file.name, 'url': photo.file.url}
+        else:
+            data = {'is_valid': False}
+        return JsonResponse(data)
 
 
-def download(request, file_type):
-    sheet = excel.pe.Sheet(data)
-    return excel.make_response(sheet, file_type)
+class CardUploadView(CreateView):
+    model = Photo
+    template_name = 'designers/basic_upload/card_of_object.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(CardUploadView, self).get_context_data(**kwargs)
+        context['message'] = "загружаете"
+        context['designer'] = CardOfObjectForDesigner.objects.get(id=self.kwargs['pk']).designer
+        return context
+
+    def get_form_class(self):
+        return PhotoForm
+
+    def get_form_kwargs(self, **kwargs):
+        kwargs = super(CardUploadView, self).get_form_kwargs(**kwargs)
+        if 'data' in kwargs:
+            card_of_object = CardOfObjectForDesigner.objects.get(pk=self.kwargs['pk'])
+            instance = Photo(card_of_object=card_of_object)
+            kwargs.update({'instance': instance})
+        return kwargs
+
+    def get_success_url(self):
+        return reverse('designers:card_photo', kwargs={'designer_id': self.kwargs['designer_id'],
+                                                       'pk': self.kwargs['pk']})
+
+
+class CardPhotoView(generic.DetailView):
+    model = CardOfObjectForDesigner
+    template_name = 'designers/basic_upload/photo_of_card.html'
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(CardPhotoView, self).get_context_data(**kwargs)
+        # Add in the publisher
+        context['designer'] = Designers.objects.get(id=self.kwargs['designer_id'])
+        return context
+
+    def get_object(self, queryset=None):
+        return CardOfObjectForDesigner.objects.get(id=self.kwargs['pk'])
 
 
 def export_data(request, atype):
@@ -304,7 +448,43 @@ def years_ago(years, from_date=None):
     if from_date is None:
         from_date = datetime.datetime.now().date()
     try:
-        return from_date.replace(year=from_date.year - years, day=from_date.day-1)
+        return from_date.replace(year=from_date.year - years, day=from_date.day - 1)
     except ValueError:
-        return from_date.replace(month=from_date.month-1, day=28,
+        return from_date.replace(month=from_date.month - 1, day=28,
                                  year=from_date.year - years)
+
+
+class CardPhotoEditView(UpdateView):
+    model = Photo
+    template_name = 'designers/basic_upload/card_of_object.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(CardPhotoEditView, self).get_context_data(**kwargs)
+        context['message'] = "редактируете"
+        return context
+
+    def get_form_class(self):
+        return PhotoForm
+
+    def get_success_url(self):
+        return reverse('designers:card_photo', kwargs={'designer_id': self.kwargs['designer_id'],
+                                                       'pk': self.kwargs['card_id']})
+
+
+class CardPhotoDeleteView(DeleteView):
+    model = Photo
+    template_name = 'designers/card_of_object_confirm_delete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(CardPhotoDeleteView, self).get_context_data(**kwargs)
+        context['card_of_object'] = self.kwargs
+        context['message'] = 'фототографию работы'
+        return context
+
+    def get_object(self, queryset=None):
+        obj = super(CardPhotoDeleteView, self).get_object()
+        return obj
+
+    def get_success_url(self):
+        return reverse('designers:card_photo', kwargs={'designer_id': self.kwargs['designer_id'],
+                                                       'pk': self.kwargs['card_id']})

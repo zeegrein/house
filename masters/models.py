@@ -261,9 +261,22 @@ class CardOfObjectForMaster(models.Model):
             return self.budged_to
 
 
+def card_media_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
+    return 'card_of_master_{0}/{1}'.format(instance.card_of_object.id, filename)
+
+
 class TypesOfWork(models.Model):
     card = models.ForeignKey(CardOfObjectForMaster, on_delete=models.CASCADE)
     work = models.CharField('Тип работ', max_length=200, null=True, blank=True, default=None)
+
+
+class Photo(models.Model):
+    card_of_object = models.ForeignKey(CardOfObjectForMaster, on_delete=models.CASCADE)
+    title = models.CharField('Название', max_length=255, blank=True)
+    description = models.CharField('Описание', max_length=255, blank=True)
+    file = models.FileField(upload_to=card_media_path)
+    uploaded_at = models.DateTimeField(auto_now_add=True)
 
 
 def num_years(begin, end=None):

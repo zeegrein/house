@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% load static %}
+
+    <h2>Вы {{ message }} фотографию работы дизайнера {{ master.name }}</h2>
+
+    {% if perms.masters.change_masters %}
+        <form action="" method="post" id="master_update" enctype="multipart/form-data">
+            {% csrf_token %}
+             <div>
+                <table>
+        {#        {{ form.as_table }}#}
+                    {% for field in form %}
+                    <div class="master-creation">
+                        <div class="master-creation-label">
+                            {{ field.label_tag }}
+
+                        </div>
+                        <div class="master-creation-field">
+                            {% if field.name == 'file' %}
+                                <div class="fileUpload btn btn-success">
+                                <span>Выбрать</span>
+                                {{ field }}
+                                </div>
+                            {% else %}
+                                {{ field }}
+                            {% endif %}
+                            {% if field.help_text %}
+                                <small style="color: grey">{{ field.help_text }}</small>
+                            {% endif %}
+                            {% for error in field.errors %}
+                                <p style="color: red">{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </table>
+            </div>
+            <input class="btn btn-primary" type="submit" value="Сохранить" />
+        </form>
+    {% endif %}
+{% endblock %}

@@ -8,47 +8,95 @@
     {% endif %}
     {% if designers %}
 
-        <table class="table-md" width="100%" cellspacing="0" cellpadding="10" border="1">
-            <tr>
-                <th>№</th>
-                <th>Имя</th>
-                <th>Телефонный номер</th>
-                <th>email</th>
-                <th>Адрес</th>
-                <th>Место оказания услуг</th>
-                <th class="td-center">Опыт работы, лет</th>
-                <th>Удаленная работа</th>
-                <th> Описание</th>
-                <th>Сайт</th>
-                <th>Сумма минимального заказа</th>
-                <th>Бригада</th>
+        <table class="table-md display" width="100%" cellspacing="0" cellpadding="10" border="1" id="main-table" >
+            <thead>
+                <tr>
+                    <th>№</th>
+                    <th>Имя</th>
+                    <th>Телефонный номер</th>
+                    <th>email</th>
+                    <th>Адрес</th>
+                    <th>Место оказания услуг</th>
+                    <th class="td-center">Опыт работы, лет</th>
+                    <th>Удаленная работа</th>
+                    <th> Описание</th>
+                    <th>Сайт</th>
+                    <th>Сумма минимального заказа</th>
+                    <th>Бригада</th>
 
-            </tr>
-            {% for designer in designers %}
-                <tr><td><span> {{ forloop.counter }}</span></td>
-                    <td><a href="{% url 'designers:price' designer.id %}">{{ designer.name }} </a></td>
-                    <td>  {{ designer.phone_number }} </td>
-                    <td>   {{ designer.email }}</td>
-                    <td>  {{ designer.address }}</td>
-                    <td> {{ designer.working_area }}</td>
-                    <td class="td-center"> {{ designer.get_experience }}</td>
-                    <td> {{ designer.distance_work|yesno:"Есть возможность, - "}} </td>
-                    <td> {{ designer.description }} </td>
-                    <td> {{ designer.website }} </td>
-                    <td>  ${{ designer.minimal_order }}</td>
-                    {% if not designer.brigade %}
-                    <td> {{ designer.brigade|yesno:", Нет " }} </td>
-                    {% else %}
-                    <td> {{ designer.brigade }} </td>
-                    {% endif %}
+                </tr>
+            </thead>
+            <tfoot>
+                <th>№</th>
+                    <th>Имя</th>
+                    <th>Телефонный номер</th>
+                    <th>email</th>
+                    <th>Адрес</th>
+                    <th>Место оказания услуг</th>
+                    <th class="td-center">Опыт работы, лет</th>
+                    <th>Удаленная работа</th>
+                    <th> Описание</th>
+                    <th>Сайт</th>
+                    <th>Сумма минимального заказа</th>
+                    <th>Бригада</th>
+            </tfoot>
+            <tbody>
+                {% for designer in designers %}
+                    <tr>
+                        <td><span> {{ forloop.counter }}</span></td>
+                        <td><a href="{% url 'designers:price' designer.id %}">{{ designer.name }} </a></td>
+                        <td>  {{ designer.phone_number }} </td>
+                        <td>   {{ designer.email }}</td>
+                        <td>  {{ designer.address }}</td>
+                        <td> {{ designer.working_area }}</td>
+                        <td class="td-center"> {{ designer.get_experience }}</td>
+                        <td> {{ designer.distance_work|yesno:"Есть возможность, - "}} </td>
+                        <td> {{ designer.description }} </td>
+                        <td> {{ designer.website }} </td>
+                        <td>  ${{ designer.minimal_order }}</td>
+                        {% if not designer.brigade %}
+                        <td> {{ designer.brigade|yesno:", Нет " }} </td>
+                        {% else %}
+                        <td> {{ designer.brigade }} </td>
+                        {% endif %}
                     </tr>
-            {% endfor %}
+                {% endfor %}
+            </tbody>
         </table>
-        <a href="/designers/export/book">Экспортировать в excel</a>
+        <a href="{% url 'designers:export' 'book' %} ">Экспортировать в excel</a>
     {% else %}
         <p>No designers are available.</p>
     {% endif %}
         {% block upload %}
         {% endblock %}
 </div>
+<script>
+$(document).ready(function() {
+    $('#main-table').DataTable( {
+        "order": [[ 3, "desc" ]],
+        language: {
+          "processing": "Подождите...",
+          "search": "Поиск:",
+          "lengthMenu": "Показать _MENU_ записей",
+          "info": "Записи с _START_ до _END_ из _TOTAL_ записей",
+          "infoEmpty": "Записи с 0 до 0 из 0 записей",
+          "infoFiltered": "(отфильтровано из _MAX_ записей)",
+          "infoPostFix": "",
+          "loadingRecords": "Загрузка записей...",
+          "zeroRecords": "Записи отсутствуют.",
+          "emptyTable": "В таблице отсутствуют данные",
+          "paginate": {
+            "first": "Первая",
+            "previous": "Предыдущая",
+            "next": "Следующая",
+            "last": "Последняя"
+          },
+          "aria": {
+            "sortAscending": ": активировать для сортировки столбца по возрастанию",
+            "sortDescending": ": активировать для сортировки столбца по убыванию"
+          }
+        }
+    } );
+} );
+</script>
 {% endblock %}

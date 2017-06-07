@@ -9,6 +9,23 @@
     <div>
         <table>
 {#        {{ form.as_table }}#}
+        {{ price_for_remodeling_form.as_table }}
+                {% with named_formsets.price_for_remodeling_form as formset %}
+                    {{ formset }}
+                    {{ formset.management_form }}
+                {% endwith %}
+                {{ price_for_remodeling_form.management_form }}
+                {{ price_for_wall_and_ceiling_form.non_form_errors }}
+
+            {% for form in formset %}
+            <ul>
+                <li>{{ form.title }}</li>
+                <li>{{ form.pub_date }}</li>
+                {% if formset.can_delete %}
+                    <li>{{ form.DELETE }}</li>
+                {% endif %}
+                </ul>
+            {% endfor %}
             {% for field in form %}
             <div class="master-creation">
                 <div class="master-creation-label">

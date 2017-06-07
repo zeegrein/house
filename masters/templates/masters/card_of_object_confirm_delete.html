@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Удалить {{ message }} объекта мастера</h1>
+
+<p>Ты точно уверен(а) в том, что хочешь удалить {{ message }} объекта {{ object.master.name}}?</p>
+
+
+<form action="" method="POST">
+  {% csrf_token %}
+  <input  class="btn btn-danger" type="submit" action="" value="Удалить" />
+</form>
+
+{% endblock %}

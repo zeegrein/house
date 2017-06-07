@@ -104,6 +104,11 @@ def design_media_path(instance, filename):
     return 'design_{0}/{1}'.format(instance.designer.id, filename)
 
 
+def card_media_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
+    return 'card_of_designer_{0}/{1}'.format(instance.card_of_object.id, filename)
+
+
 class CardOfObjectForDesigner(models.Model):
     designer = models.ForeignKey(Designers, on_delete=models.CASCADE)
     description = models.CharField("Описание", max_length=500)
@@ -111,6 +116,14 @@ class CardOfObjectForDesigner(models.Model):
     budged_from = models.IntegerField("бюджет от", null=True, blank=True)
     budged_to = models.IntegerField("Бюджет до", null=True, blank=True)
     three_d_visualisation = models.FileField("3D визуализация", upload_to=design_media_path)
+
+
+class Photo(models.Model):
+    card_of_object = models.ForeignKey(CardOfObjectForDesigner, on_delete=models.CASCADE)
+    title = models.CharField('Название', max_length=255, blank=True)
+    description = models.CharField('Описание', max_length=255, blank=True)
+    file = models.FileField(upload_to=card_media_path)
+    uploaded_at = models.DateTimeField(auto_now_add=True)
 
 
 def num_years(begin, end=None):

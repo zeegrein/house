@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+        <h2>Объект дизайнера </h2>
+        <table width="50%" cellspacing="0" cellpadding="4" border="2">
+            <tr>
+                <th>Описание</th>
+                <th>Местоположение</th>
+                <th>Бюджет</th>
+                <th>Фотоотчет</th>
+
+            </tr>
+            <tr>
+                <td>  <a>{{ cardofobjectfordesigner.description }}</a></td>
+                <td>  {{ cardofobjectfordesigner.location }} </td>
+                <td>  ${{ cardofobjectfordesigner.budged_from  }} - {{ cardofobjectfordesigner.budged_to }}</td>
+                <td>  <a><img src="{{ cardofobjectfordesigner.three_d_visualisation.path}}"  width="500"></a>
+                </td>
+            </tr>
+
+        </table>
+        <h3>Фотоотчет работы дизайнера </h3>
+
+        <table width="50%" cellspacing="0" cellpadding="4" border="2">
+            <tr>
+                <th>Объект</th>
+                <th>Описание</th>
+                <th>Фотоотчет</th>
+                <th>Редактировать фото/удалить работу</th>
+
+            </tr>
+            {% for photo in cardofobjectfordesigner.photo_set.all %}
+                <tr>
+                <td>  {{ photo.title }}</td>
+                <td>  {{ photo.description }}</td>
+                <td>  <a href={{ photo.url }}><img src="{{ photo.file.path}}" width="500"></a> </td>
+                <td>
+                    <a class="btn btn-danger"  href="{% url 'designers:delete_card_photo' designer.id  cardofobjectfordesigner.id photo.id %}" title="Удалить объект">
+                        <span>&#10008;</span>Удалить
+
+                    </a>
+                    <a  class="btn btn-info"  href="{% url 'designers:edit_card_photo' designer.id  cardofobjectfordesigner.id photo.id %}" title="Редактировать фотографию работы">
+                        <i class="icon-plus-sign" title="Добавить фотографии работ"></i>
+                          <span class="glyphicon"> &#x2752;</span>Редактировать
+                    </a>
+                </td>
+
+                </tr>
+            {% endfor %}
+
+        </table>
+        <a  class="btn btn-success" href="{% url 'designers:upload_card_photo' designer.id  cardofobjectfordesigner.id %}" title="Добавить фотографии работ">
+            <i class="icon-plus-sign" title="Добавить фотографии работ"></i>
+            <span class="glyphicon glyphicon-plus-sign"></span>Добавить
+        </a>
+
+{% endblock %}
+{#href="{% url 'designers:delete_card' designers.id card.card_id %}"#}
+{# href="{% url 'designers:edit_card' designers.id card.card_id%}"#}

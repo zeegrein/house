@@ -61,6 +61,7 @@ ROOT_URLCONF = 'house.urls'
 STATICFILES_DIRS = [
 os.path.join(BASE_DIR, "static"),
 ]
+MEDIA_URL = '/media/'
 MEDIA_ROOT = '/home/eldiyar/PycharmProjects/house/media/'
 TEMPLATES = [
     {
@@ -137,7 +138,6 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
-
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static_collectioin')
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

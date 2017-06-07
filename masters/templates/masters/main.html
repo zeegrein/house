@@ -1,10 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
 {% load static %}
-{#{% if user.is_authenticated %}#}
-{#    <link rel="stylesheet" type="text/css" href="{% static 'masters/style.css' %}" />#}
-{#    <li><a href="{% url 'masters:master_creation' %}">Create</a></li>#}
-{#{% endif %}#}
 
 <div class="container-fluid">
     {% if  perms.masters.add_master%}
@@ -12,42 +8,57 @@
     {% endif %}
 
     {% if masters %}
-    <table width="100%" cellspacing="0" cellpadding="10" border="1" class="table-md">
-        <tr>
-            <th>No</th>
-            <th>Имя</th>
-            <th>Фамилия</th>
-            <th>Телефонный номер</th>
-            <th>email</th>
-            <th>Страна</th>
-            <th>Город</th>
-            <th class="td-center">Опыт работы</th>
-            <th>Дополнительная информация</th>
-
-        </tr>
-        {% for master in masters %}
+    <table width="100%" cellspacing="0" cellpadding="10" border="1" class="table-md display"  id="main-table">
+        <thead>
             <tr>
-                <td><span> {{ forloop.counter }}</span></td>
-                <td><a href="{% url 'masters:price' master.id %}">{{ master.first_name }}</a></td>
-                <td>  {{ master.second_name }}</td>
-                <td>  {{ master.phone_number }} </td>
-                <td>   {{ master.email }}</td>
-                <td> {{ master.country }}</td>
-                <td>  {{ master.city }}</td>
-                <td class="td-center"> {{ master.get_experience }}</td>
-                {% if not master.additional_info %}
-                    <td> {{ master.additional_info|yesno:", Жадный до информации мастер не предоставил доп. инфу о себе" }}</td>
-                {% else %}
-                    <td> {{ master.additional_info }}</td>
-                {% endif %}
-            </tr>
-        {% endfor %}
-    </table>
+                <th>No</th>
+                <th>Имя</th>
+                <th>Фамилия</th>
+                <th>Телефонный номер</th>
+                <th>email</th>
+                <th>Страна</th>
+                <th>Город</th>
+                <th class="td-center">Опыт работы</th>
+                <th>Дополнительная информация</th>
 
-    <a href="/masters/export/book" style="position:relative; top: 10%; border-radius: 5px;
-    border: 0;
-    font-family: Tahoma,,sans-serif;
-    background: blanchedalmond;">Выгрузить в excel</a>
+            </tr>
+        </thead>
+        <tfoot>
+            <tr>
+                <th>No</th>
+                <th>Имя</th>
+                <th>Фамилия</th>
+                <th>Телефонный номер</th>
+                <th>email</th>
+                <th>Страна</th>
+                <th>Город</th>
+                <th class="td-center">Опыт работы</th>
+                <th>Дополнительная информация</th>
+
+            </tr>
+        </tfoot>
+        <tbody>
+            {% for master in masters %}
+                <tr>
+                    <td><span> {{ forloop.counter }}</span></td>
+                    <td><a href="{% url 'masters:price' master.id %}">{{ master.first_name }}</a></td>
+                    <td>  {{ master.second_name }}</td>
+                    <td>  {{ master.phone_number }} </td>
+                    <td>   {{ master.email }}</td>
+                    <td> {{ master.country }}</td>
+                    <td>  {{ master.city }}</td>
+                    <td class="td-center"> {{ master.get_experience }}</td>
+                    {% if not master.additional_info %}
+                        <td> {{ master.additional_info|yesno:", Жадный до информации мастер не предоставил доп. инфу о себе" }}</td>
+                    {% else %}
+                        <td> {{ master.additional_info }}</td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        </tbody>
+
+    </table>
+    <a href="{% url 'masters:export' 'book' %} ">Экспортировать в excel</a>
 {% else %}
     <p>No masters are available.</p>
 {% endif %}
@@ -55,4 +66,33 @@
     {% endblock %}
 </div>
 
+<script>
+$(document).ready(function() {
+    $('#main-table').DataTable( {
+        "order": [[ 3, "desc" ]],
+        language: {
+          "processing": "Подождите...",
+          "search": "Поиск:",
+          "lengthMenu": "Показать _MENU_ записей",
+          "info": "Записи с _START_ до _END_ из _TOTAL_ записей",
+          "infoEmpty": "Записи с 0 до 0 из 0 записей",
+          "infoFiltered": "(отфильтровано из _MAX_ записей)",
+          "infoPostFix": "",
+          "loadingRecords": "Загрузка записей...",
+          "zeroRecords": "Записи отсутствуют.",
+          "emptyTable": "В таблице отсутствуют данные",
+          "paginate": {
+            "first": "Первая",
+            "previous": "Предыдущая",
+            "next": "Следующая",
+            "last": "Последняя"
+          },
+          "aria": {
+            "sortAscending": ": активировать для сортировки столбца по возрастанию",
+            "sortDescending": ": активировать для сортировки столбца по убыванию"
+          }
+        }
+    } );
+} );
+</script>
 {% endblock %}

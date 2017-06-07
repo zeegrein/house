@@ -15,9 +15,10 @@ from django.utils import timezone
 from django.views import generic
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
-from masters.forms import PriceForRemodelingFormSet, PriceForWallsAndCeilingFormSet, MasterForm
+from masters.forms import PriceForRemodelingFormSet, PriceForWallsAndCeilingFormSet, MasterForm, PhotoForm, \
+    CardOfObjectForMasterForm
 from .forms import MasterCreationMultiForm, PriceForRemodelingForm, PriceForWallsAndCeilingForm
-from .models import Question, Choice, Master, PriceForRemodeling, PriceForWallsAndCeiling
+from .models import Question, Choice, Master, PriceForRemodeling, PriceForWallsAndCeiling, Photo, CardOfObjectForMaster
 
 
 class UploadFileForm(forms.Form):
@@ -158,8 +159,16 @@ class MasterCreate(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(MasterCreate, self).get_context_data(**kwargs)
-        context['price_for_remodeling'] = PriceForRemodeling.objects.all()
-        context['price_for_walls_and_ceiling'] = PriceForWallsAndCeiling.objects.all()
+        if self.request.POST:
+            context['price_for_remodeling'] = PriceForRemodelingFormSet(self.request.POST, instance=self.object)
+            context['price_for_walls_and_ceiling'] = PriceForWallsAndCeilingFormSet(self.request.POST)
+            context['price_for_remodeling'].full_clean()
+            context['price_for_walls_and_ceiling'].full_clean()
+        else:
+            context['price_for_remodeling'] = PriceForRemodelingFormSet(instance=self.object)
+            context['price_for_walls_and_ceiling'] = PriceForWallsAndCeilingFormSet(instance=self.object)
+            context['price_for_remodeling'].full_clean()
+            context['price_for_walls_and_ceiling'].full_clean()
         return context
 
     def get_success_url(self):
@@ -169,35 +178,35 @@ class MasterCreate(CreateView):
         self.object = None
         form_class = self.get_form_class()
         form = self.get_form(form_class)
-        price_for_remodeling_form = PriceForRemodelingForm
-        price_for_wall_and_ceiling_form = PriceForWallsAndCeilingForm
+        price_for_remodeling_form = PriceForRemodelingFormSet()
+        price_for_walls_and_ceiling_form = PriceForWallsAndCeilingFormSet()
         return self.render_to_response(
             self.get_context_data(form=form,
                                   price_for_remodeling_form=price_for_remodeling_form,
-                                  price_for_wall_and_ceiling_form=price_for_wall_and_ceiling_form))
+                                  price_for_walls_and_ceiling_form=price_for_walls_and_ceiling_form))
 
     def post(self, request, *args, **kwargs):
         self.object = None
         request.POST._mutable = True
         form_class = self.get_form_class()
         form = self.get_form(form_class)
-        price_for_remodeling_form = PriceForRemodelingForm(self.request.POST)
-        price_for_wall_and_ceiling_form = PriceForWallsAndCeilingForm(self.request.POST)
+        price_for_remodeling_form = PriceForRemodelingFormSet(self.request.POST, request.FILES)
+        price_for_walls_and_ceiling_form = PriceForWallsAndCeilingFormSet(self.request.POST)
         if (form.is_valid() and price_for_remodeling_form.is_valid() and
-                price_for_wall_and_ceiling_form.is_valid()):
-            return self.form_valid(form, price_for_remodeling_form, price_for_wall_and_ceiling_form)
+                price_for_walls_and_ceiling_form.is_valid()):
+            return self.form_valid(form, price_for_remodeling_form, price_for_walls_and_ceiling_form)
         else:
-            return self.form_invalid(form, price_for_remodeling_form, price_for_wall_and_ceiling_form)
+            return self.form_invalid(form, price_for_remodeling_form, price_for_walls_and_ceiling_form)
 
-    def form_valid(self, form, price_for_remodeling_form, price_for_wall_and_ceiling_form):
+    def form_valid(self, form, price_for_remodeling_form, price_for_walls_and_ceiling_form):
         self.object = form.save()
         price_for_remodeling_form.instance = self.object
         price_for_remodeling_form.save()
-        price_for_wall_and_ceiling_form.instance = self.object
-        price_for_wall_and_ceiling_form.save()
+        price_for_walls_and_ceiling_form.instance = self.object
+        price_for_walls_and_ceiling_form.save()
         return HttpResponseRedirect(self.get_success_url())
 
-    def form_invalid(self, form, price_for_remodeling_form, price_for_wall_and_ceiling_form):
+    def form_invalid(self, form, price_for_remodeling_form, price_for_walls_and_ceiling_form):
         # try:
         # int_to_date = years_ago(int(form.data['experience']))
         # form.data['experience'] = int_to_date
@@ -210,7 +219,13 @@ class MasterCreate(CreateView):
         return self.render_to_response(
             self.get_context_data(form=form,
                                   price_for_remodeling_form=price_for_remodeling_form,
-                                  price_for_wall_and_ceiling_form=price_for_wall_and_ceiling_form))
+                                  price_for_walls_and_ceiling_form=price_for_walls_and_ceiling_form))
+
+    def get_named_formsets(self):
+        return {
+            'price_for_remodeling_form': PriceForRemodelingFormSet(self.request.POST or None),
+            'price_for_walls_and_ceiling_form': PriceForWallsAndCeilingFormSet(self.request.POST or None),
+        }
 
 
 class MasterUpdate(UpdateView):
@@ -239,13 +254,15 @@ class MasterUpdate(UpdateView):
             years = int(datetime.datetime.strptime(form.data['master-experience'], "%Y-%m-%d").date().year)
             month = int(datetime.datetime.strptime(form.data['master-experience'], "%Y-%m-%d").date().month)
             day = int(datetime.datetime.strptime(form.data['master-experience'], "%Y-%m-%d").date().day)
-            form.data['master-experience'] = datetime.datetime.strptime(str(years) + "-" + str(month) + '-' + str(day), "%Y-%m-%d").date()
+            form.data['master-experience'] = datetime.datetime.strptime(str(years) + "-" + str(month) + '-' + str(day),
+                                                                        "%Y-%m-%d").date()
             return self.send_form(form)
         except ValueError:
             try:
                 years = int(datetime.datetime.strptime(form.data['master-experience'], "%Y-%m").date().year)
                 month = int(datetime.datetime.strptime(form.data['master-experience'], "%Y-%m").date().month)
-                form.data['master-experience'] = datetime.datetime.strptime(str(years) + "-" + str(month), "%Y-%m-%d").date()
+                form.data['master-experience'] = datetime.datetime.strptime(str(years) + "-" + str(month),
+                                                                            "%Y-%m-%d").date()
                 return self.send_form(form)
             except ValueError:
                 try:
@@ -433,3 +450,138 @@ def years_ago(years, from_date=None):
         assert from_date.month == 2 and from_date.day == 29
         return from_date.replace(month=2, day=28,
                                  year=from_date.year - years)
+
+
+class CardOfObjectForMasterView(CreateView):
+    model = CardOfObjectForMaster
+    template_name = 'masters/card_of_object.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(CardOfObjectForMasterView, self).get_context_data(**kwargs)
+        context['message'] = "создаёте"
+        return context
+
+    def get_form_class(self):
+        return CardOfObjectForMasterForm
+
+    def get_form_kwargs(self, **kwargs):
+        kwargs = super(CardOfObjectForMasterView, self).get_form_kwargs(**kwargs)
+        if 'data' in kwargs:
+            master = Master.objects.get(pk=self.kwargs['pk'])
+            instance = CardOfObjectForMaster(master=master)
+            kwargs.update({'instance': instance})
+        return kwargs
+
+    def get_success_url(self):
+        return reverse('masters:price', kwargs={'pk': self.kwargs['pk']})
+
+
+class CardOfObjectForMasterEditView(UpdateView):
+    model = CardOfObjectForMaster
+    template_name = 'masters/card_of_object.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(CardOfObjectForMasterEditView, self).get_context_data(**kwargs)
+        context['message'] = "редактируете"
+        return context
+
+    def get_form_class(self):
+        return CardOfObjectForMasterForm
+
+    def get_success_url(self):
+        return reverse('masters:price', kwargs={'pk': self.kwargs['master_id']})
+
+
+class CardOfObjectForMasterDeleteView(DeleteView):
+    model = CardOfObjectForMaster
+    template_name = 'masters/card_of_object_confirm_delete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(CardOfObjectForMasterDeleteView, self).get_context_data(**kwargs)
+        context['master'] = self.kwargs
+        context['message'] = 'карточку '
+
+        return context
+
+    def get_object(self, queryset=None):
+        """ Hook to ensure object is owned by request.user. """
+        obj = super(CardOfObjectForMasterDeleteView, self).get_object()
+        return obj
+
+    def get_success_url(self):
+        return reverse('masters:price', kwargs={'pk': self.kwargs['master_id']})
+
+
+class CardUploadView(CreateView):
+    model = Photo
+    template_name = 'masters/upload/card_of_object.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(CardUploadView, self).get_context_data(**kwargs)
+        context['message'] = "загружаете"
+        context['master'] = CardOfObjectForMaster.objects.get(id=self.kwargs['pk']).master
+        return context
+
+    def get_form_class(self):
+        return PhotoForm
+
+    def get_form_kwargs(self, **kwargs):
+        kwargs = super(CardUploadView, self).get_form_kwargs(**kwargs)
+        if 'data' in kwargs:
+            card_of_object = CardOfObjectForMaster.objects.get(pk=self.kwargs['pk'])
+            instance = Photo(card_of_object=card_of_object)
+            kwargs.update({'instance': instance})
+        return kwargs
+
+    def get_success_url(self):
+        return reverse('masters:card_photo', kwargs={'master_id': self.kwargs['master_id'],
+                                                       'pk': self.kwargs['pk']})
+
+
+class CardPhotoView(generic.DetailView):
+    model = CardOfObjectForMaster
+    template_name = 'masters/upload/photo_of_card.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(CardPhotoView, self).get_context_data(**kwargs)
+        context['master'] = Master.objects.get(id=self.kwargs['master_id'])
+        return context
+
+    def get_object(self, queryset=None):
+        return CardOfObjectForMaster.objects.get(id=self.kwargs['pk'])
+
+
+class CardPhotoEditView(UpdateView):
+    model = Photo
+    template_name = 'masters/upload/card_of_object.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(CardPhotoEditView, self).get_context_data(**kwargs)
+        context['message'] = "редактируете"
+        return context
+
+    def get_form_class(self):
+        return PhotoForm
+
+    def get_success_url(self):
+        return reverse('masters:card_photo', kwargs={'master_id': self.kwargs['master_id'],
+                                                     'pk': self.kwargs['card_id']})
+
+
+class CardPhotoDeleteView(DeleteView):
+    model = Photo
+    template_name = 'masters/card_of_object_confirm_delete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(CardPhotoDeleteView, self).get_context_data(**kwargs)
+        context['card_of_object'] = self.kwargs
+        context['message'] = 'фототографию работы'
+        return context
+
+    def get_object(self, queryset=None):
+        obj = super(CardPhotoDeleteView, self).get_object()
+        return obj
+
+    def get_success_url(self):
+        return reverse('masters:card_photo', kwargs={'master_id': self.kwargs['master_id'],
+                                                     'pk': self.kwargs['card_id']})

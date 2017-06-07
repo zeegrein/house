@@ -3,7 +3,7 @@
 {% block content %}
 {% load static %}
 
-    <h2>Вы редактируете дизайнера {{ designers.name }}</h2>
+    <h2>Вы {{ message }} фотографию работы дизайнера {{ designer.name }}</h2>
 
     {% if perms.designers.change_designers %}
         <form action="" method="post" id="designer_update" enctype="multipart/form-data">
@@ -18,16 +18,19 @@
 
                         </div>
                         <div class="master-creation-field">
-                            {{ field }}
-                            {% if field.help_text %}
-                            <small style="color: grey">{{ field.help_text }}</small>
+                            {% if field.name == 'file' %}
+                                <div class="fileUpload btn btn-success">
+                                <span>Выбрать</span>
+                                {{ field }}
+                                </div>
+                            {% else %}
+                                {{ field }}
                             {% endif %}
-        {#                    {% if field.name == 'phone_number' %}#}
-        {#                        <input type="text" class="input-medium bfh-phone" data-format="+1 (ddd) ddd-dddd" name="master-phone_number" maxlength="200" id="id_master-phone_number" required="">#}
-        {#                        <span id='message'>works</span>#}
-        {#                    {% endif %}#}
+                            {% if field.help_text %}
+                                <small style="color: grey">{{ field.help_text }}</small>
+                            {% endif %}
                             {% for error in field.errors %}
-                            <p style="color: red">{{ error }}</p>
+                                <p style="color: red">{{ error }}</p>
                             {% endfor %}
                         </div>
                     </div>
@@ -37,23 +40,4 @@
             <input class="btn btn-primary" type="submit" value="Сохранить" />
         </form>
     {% endif %}
-    <script>
-    $("#designer_update").validate({
-    errorClass: "my-error-class",
-            validClass: "my-valid-class",
-
-    rules : {
-            "designer-experience": {
-                Date : true
-            }
-    },
-    messages:{
-    password: {
-         required:"Пароль обязателен"
-
-       }
-    }
-
-    });
-    </script>
 {% endblock %}

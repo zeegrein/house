@@ -4,7 +4,7 @@
 
 <h2>Вы создаёте нового дизайнера</h2>
 
-    <form action="" method="post">
+    <form action="" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <table>
         {{ form.as_table }}
