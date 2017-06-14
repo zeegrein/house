@@ -3,60 +3,23 @@
 {% load static %}
 
 <div class="container-fluid">
-    <div>
-        {% if  perms.masters.add_master%}
-            <div style="display: inline-block;"><a class="btn btn-primary" style="display: inline-block; margin:10px;" href="{% url 'masters:master_creation' %}">Создать нового мастера</a></div>
-        {% endif %}
+    {% if  perms.masters.add_master%}
+    <div><a class="btn btn-primary" href="{% url 'masters:master_creation' %}">Создать нового мастера</a></div>
+    {% endif %}
 
-        <div style="display: inline-block;"><a class="btn btn-primary"  href="{% url 'masters:addons' %}">Только доп. поле</a></div>
-
-    </div>
     {% if masters %}
     <table width="100%" cellspacing="0" cellpadding="10" border="1" class="table-md display"  id="main-table">
         <thead>
             <tr>
                 <th>No</th>
-                <th>Имя</th>
-                <th>Фамилия</th>
-                <th>Телефонный номер</th>
-                <th>email</th>
-                <th>Страна</th>
-                <th>Город</th>
-                <th class="td-center">Опыт работы</th>
                 <th>Дополнительная информация</th>
-
             </tr>
         </thead>
-        <tfoot>
-            <tr>
-                <th>No</th>
-                <th>Имя</th>
-                <th>Фамилия</th>
-                <th>Телефонный номер</th>
-                <th>email</th>
-                <th>Страна</th>
-                <th>Город</th>
-                <th class="td-center">Опыт работы</th>
-                <th>Дополнительная информация</th>
-
-            </tr>
-        </tfoot>
         <tbody>
             {% for master in masters %}
                 <tr>
                     <td><span> {{ forloop.counter }}</span></td>
-                    <td><a href="{% url 'masters:price' master.id %}">{{ master.first_name }}</a></td>
-                    <td>  {{ master.second_name }}</td>
-                    <td>  {{ master.phone_number }} </td>
-                    <td>   {{ master.email }}</td>
-                    <td> {{ master.country }}</td>
-                    <td>  {{ master.city }}</td>
-                    <td class="td-center"> {{ master.get_experience }}</td>
-                    {% if not master.additional_info %}
-                        <td> {{ master.additional_info|yesno:", Жадный до информации мастер не предоставил доп. инфу о себе" }}</td>
-                    {% else %}
-                        <td> {{ master.additional_info }}</td>
-                    {% endif %}
+                    <td> {{ master.additional_info }}</td>
                 </tr>
             {% endfor %}
         </tbody>

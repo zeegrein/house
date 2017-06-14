@@ -17,6 +17,7 @@ urlpatterns = [
     url(r'^(?P<question_id>[0-9]+)/vote/$', views.vote, name='vote'),
     url(r'^list/$', views.MainView.as_view(), name='main'),
     url(r'^(?P<pk>[0-9]+)/price/$', views.PriceView.as_view(), name='price'),
+    url(r'^addons/$', views.AddonView.as_view(), name='addons'),
     url(r'^upload/$', views.upload, name='uplink'),
     url(r'^import/$', views.import_data, name='import'),
     url(r'^export/(.*)', views.export_data, name="export")

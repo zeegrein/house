@@ -14,7 +14,7 @@ from django.urls import reverse_lazy
 from django.utils import timezone
 from django.views import generic
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
-
+from django.db.models import Q
 from masters.forms import PriceForRemodelingFormSet, PriceForWallsAndCeilingFormSet, MasterForm, PhotoForm, \
     CardOfObjectForMasterForm
 from .forms import MasterCreationMultiForm, PriceForRemodelingForm, PriceForWallsAndCeilingForm
@@ -404,7 +404,7 @@ def export_data(request, atype):
             Master, 'xls', file_name="sheet")
     elif atype == "book":
         return excel.make_response_from_tables(
-            [Master, PriceForRemodeling], 'xls', file_name="book")
+            [Master, PriceForRemodeling, PriceForWallsAndCeiling], 'xls', file_name="book")
     elif atype == "custom":
         master = Master.objects.get(experience__lte=datetime.date(2015, 1, 31))
         query_sets = PriceForRemodeling.objects.filter(master=master)
@@ -585,3 +585,53 @@ class CardPhotoDeleteView(DeleteView):
     def get_success_url(self):
         return reverse('masters:card_photo', kwargs={'master_id': self.kwargs['master_id'],
                                                      'pk': self.kwargs['card_id']})
+
+
+class AddonView(generic.ListView):
+    template_name = 'masters/addon.html'
+    context_object_name = 'masters'
+
+    form = UploadFileForm
+
+    def post(self, request):
+        form = UploadFileForm(self.request.POST,
+                              self.request.FILES)
+
+        def choice_func(row):
+            q = Master.objects.filter(slug=row[0])[0]
+            row[0] = q
+            return row
+
+        if form.is_valid():
+
+            masters = Master.objects.all
+            template = loader.get_template('masters/upload_masters.html')
+            context = {
+                'masters': masters,
+                'form': self.form
+            }
+            # ['master_id', 'overhaul', 'party_remodeling', 'remodeling'],
+
+            self.request.FILES['file'].save_to_database(
+                model=Master,
+                mapdict=['first_name', 'second_name', 'middle_name', 'phone_number', 'email', 'city',
+                         'country', 'experience', 'additional_info']
+            )
+            return HttpResponse(template.render(context, request))
+        else:
+            return HttpResponseBadRequest()
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(AddonView, self).get_context_data(**kwargs)
+        # Add in the publisher
+        context['form'] = self.form
+        return context
+
+    def get_queryset(self):
+        """
+        Return the last five published questions (not including those set to be
+        published in the future).
+        """
+
+        return Master.objects.filter(~Q(additional_info=None))
