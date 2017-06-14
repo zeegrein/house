@@ -51,11 +51,11 @@
                     <span class="icon-bar"></span>
                 </button>
                 {% if masters or master %}
-                    <a class="navbar-brand" href="/masters/list">Мастера</a>
+                    <a class="navbar-brand" href='{% url 'masters'  %}'>Мастера</a>
                 {% endif %}
 
-                {% if designers %}
-                    <a class="navbar-brand" href="/designers">Дизайнеры</a>
+                {% if designers or designer %}
+                    <a class="navbar-brand" href="{% url 'designers' %}">Дизайнеры</a>
                 {% endif %}
                 {% if not masters and not designers and not master %}
                     <a class="navbar-brand" href="/">Дизайнеры и мастера</a>
