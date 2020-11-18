@@ -20,3 +20,4 @@ This PR applies the following changes:
 <!--- If you're unsure about any of these, don't hesitate to ask. We're here to help! -->
 - [ ] My change required a change to the documentation.
 - [ ] I have added tests to cover my changes.
+- [ ] I made sure coverage remains 100%.
