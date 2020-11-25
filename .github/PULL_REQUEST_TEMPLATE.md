@@ -1,5 +1,5 @@
 ## Description
-Motivation behind those changes are coming from the following [JIRA ticket](http://gousto.atlassian.net/browse/TG-XXXX)
+Motivation behind those changes are coming from the following [JIRA ticket](http://ldr.atlassian.net/browse/LDR-XXXX)
 <!--- If applicable describe your changes in this section -->
 This PR applies the following changes:
 - 
