@@ -21,3 +21,4 @@ This PR applies the following changes:
 - [ ] My change required a change to the documentation.
 - [ ] I have added tests to cover my changes.
 - [ ] I made sure coverage remains 100%.
+- [ ] Feature branch tested.
