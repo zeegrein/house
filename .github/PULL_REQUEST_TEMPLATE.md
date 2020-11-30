@@ -14,6 +14,7 @@ This PR applies the following changes:
 - [ ] Bug fix (non-breaking change which fixes an issue)
 - [ ] New feature (non-breaking change which adds functionality)
 - [ ] Breaking change (fix or feature that would cause existing functionality to change)
+- [ ] Refactoring
 
 ## Checklist:
 <!--- Go over all the following points, and put an `x` in all the boxes that apply. -->
@@ -21,3 +22,4 @@ This PR applies the following changes:
 - [ ] My change required a change to the documentation.
 - [ ] I have added tests to cover my changes.
 - [ ] I made sure coverage remains 100%.
+- [ ] Feature branch tested.
